@@ -73,15 +73,19 @@
         ];
       };
 
-      nixosConfigurations."sasha" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."ignis" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           self = inputs.self;
           inherit inputs;
         };
         modules = [
-          ./modules/common.nix
+          home-manager.nixosModules.default
+          {
+            home-manager.useGlobalPkgs = true;
+          }
           ./hosts/nixos
+          ./modules/nixos
         ];
       };
     };

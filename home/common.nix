@@ -52,4 +52,5 @@
     viAlias = true;
     vimAlias = true;
   };
+  programs.home-manager.enable = true;
 }
