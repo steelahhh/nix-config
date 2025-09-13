@@ -1,14 +1,4 @@
 {
-  "agent": {
-    "inline_assistant_model": {
-      "provider": "ollama",
-      "model": "deepseek-r1:latest"
-    },
-    "default_model": {
-      "provider": "ollama",
-      "model": "deepseek-r1:latest"
-    }
-  },
   "auto_update": false,
   "auto_install_extensions": {
     "ruby": true,
