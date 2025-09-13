@@ -1,0 +1,17 @@
+[
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-j": "terminal_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space l f": "editor::Format",
+      "space f": "file_finder::Toggle",
+      "space e": "workspace::ToggleLeftDock",
+      "space w": "workspace::Save"
+    }
+  }
+]
