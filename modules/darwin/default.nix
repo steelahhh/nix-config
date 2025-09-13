@@ -30,6 +30,7 @@
       "marta"
       "openmtp"
       "slack"
+      "zen"
     ];
     masApps = {
       "NepTunes" = 1006739057;
