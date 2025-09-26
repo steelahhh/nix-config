@@ -31,6 +31,7 @@
       "openmtp"
       "slack"
       "zen"
+      "android-platform-tools"
     ];
     masApps = {
       "NepTunes" = 1006739057;
