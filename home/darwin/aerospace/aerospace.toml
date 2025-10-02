@@ -24,8 +24,8 @@ alt-shift-k = 'move-through down'
 alt-shift-l = 'move-through up'
 alt-shift-semicolon = 'move-through right'
 
-alt-h = 'split horizontal'
-alt-v = 'split vertical'
+# alt-h = 'split horizontal'
+# alt-v = 'split vertical'
 
 alt-f = 'fullscreen'
 
