@@ -5,6 +5,7 @@
   environment.systemPackages = [
     pkgs.swiftlint
     pkgs.swiftformat
+    pkgs.maestro
   ];
 
   homebrew = {
@@ -20,6 +21,7 @@
       "mas"
       "cocoapods"
       "swiftgen"
+      "scrcpy"
     ];
     taps = [
       #"FelixKratz/formulae" #sketchybar
