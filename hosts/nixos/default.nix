@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -10,15 +10,6 @@
   networking = {
     hostName = "ignis";
     networkmanager.enable = true;
-  };
-
-  hardware.opengl.enable = true;
-  hardware.openrazer.enable = true;
-  hardware.nvidia = {
-    open = true;
-    package = config.boot.kernelPackages.nvidiaPackages.beta;
-    powerManagement.enable = true;
-    modesetting.enable = true;
   };
 
   time.timeZone = "Europe/Oslo";
@@ -35,13 +26,6 @@
     LC_TELEPHONE = "nb_NO.UTF-8";
     LC_TIME = "nb_NO.UTF-8";
   };
-
-  services.xserver.videoDrivers = [ "nvidia" ];
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {

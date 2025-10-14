@@ -29,13 +29,20 @@
     };
 
     mac-app-util.url = "github:hraban/mac-app-util";
+
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    catppuccin.url = "github:catppuccin/nix";
+    nix-flatpak.url = "github:in-a-dil-emma/declarative-flatpak/stable-v3";
   };
 
   outputs =
     {
+      catppuccin,
       home-manager,
       mac-app-util,
+      nix-flatpak,
       nix-homebrew,
+      nixos-hardware,
       nixpkgs,
       ...
     }@inputs:
@@ -80,10 +87,14 @@
           inherit inputs;
         };
         modules = [
+          nix-flatpak.nixosModule
           home-manager.nixosModules.default
           {
             home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "bkp";
           }
+          nixos-hardware.nixosModules.lenovo-legion-16ach6h-nvidia
           ./hosts/nixos
           ./modules/nixos
         ];
