@@ -11,4 +11,6 @@
     enable = true;
     theme = "Arc-Dark";
   };
+
+  home.file.".config/beets/config.yaml".source = "${../common/beets.yaml}";
 }

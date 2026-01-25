@@ -4,7 +4,7 @@
     enable = true;
     theme = {
       name = "Tokyonight-Dark";
-      package = pkgs.tokyo-night-gtk;
+      package = pkgs.tokyonight-gtk-theme;
     };
     iconTheme = {
       name = "Adwaita";

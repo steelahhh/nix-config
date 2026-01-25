@@ -1,0 +1,50 @@
+plugins: inline convert duplicates edit export fetchart thumbnails albumtypes musicbrainz fromfilename
+threaded: yes
+alt_filename: albumart
+original-date: no
+per_disc_numbering: no
+
+directory: ~/Music/library
+library: ~/Music/library/db
+convert:
+  auto: no
+  dest: ~/Music/converted
+  embed: yes
+  copy_album_art: yes
+  never_convert_lossy_files: yes
+  extension: opus
+  format: opus
+  formats:
+    mp3: ffmpeg -i $source -y -vn -aq 10 -ab 320k -ac 2 -ar 48000 $dest
+    ogg: ffmpeg -i $source -y -vn -acodec libvorbis -aq 10 $dest
+    opus: ffmpeg -i $source -y -vn -acodec libopus -ab 256k -vbr on $dest
+albumtypes:
+  types:
+    - ep: 'EP'
+    - op: 'OP'
+    - single: 'Single'
+    - live: 'Live'
+    - remix: 'Remix'
+  bracket: '[]'
+paths:
+  default: artists/$albumartist/$album%aunique{} [$year]$atypes/$track $title
+  singleton: singles/$artist - $title
+  comp: compilations/$album%aunique{} [$year]$atypes/$track $title
+  albumtype:soundtrack: soundtracks/$album [$year]$atypes/$track $title
+import:
+  autotag: yes
+  write: no
+  copy: no
+  move: yes
+  resume: ask
+  incremental: yes
+  quiet_fallback: skip
+  log: ~/Music/library/beet.log
+musicbrainz:
+  extra_tags: [barcode, catalognum, country, year]
+  genres: yes
+  external_ids:
+    bandcamp: yes
+    discogs: yes
+    spotify: yes
+    tidal: yes

@@ -5,7 +5,7 @@
   # nix-darwin is silly so have to add JAVA_HOME manually
   programs.zsh = {
     initContent = "
-export JAVA_HOME=${pkgs.jdk23}
+export JAVA_HOME=${pkgs.jdk21}
     ";
 
     shellAliases = {

@@ -10,7 +10,7 @@
     pkgs.nixfmt
     pkgs.home-manager
     pkgs.git-machete
-    pkgs.zulu24
+    pkgs.zulu21
     pkgs.tokei
     pkgs.gh
     pkgs.ruby

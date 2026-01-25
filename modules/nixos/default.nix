@@ -13,12 +13,21 @@
 
   environment.systemPackages = with pkgs; [
     git
+    unzip
 
     ghostty
+    calibre
+
+    nicotine-plus
+    beets
+    rhythmbox
+    picard
 
     nwg-look
 
     catppuccin-cursors.mochaDark
+
+    protonvpn-gui
 
     kdePackages.dolphin
     kdePackages.dolphin-plugins
