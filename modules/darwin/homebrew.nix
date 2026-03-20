@@ -14,6 +14,8 @@
       "cocoapods"
       "swiftgen"
       "scrcpy"
+      "gradle-profiler"
+      "mrmans0n/tap/gg-stack"
     ];
     taps = [
       #"FelixKratz/formulae" #sketchybar
