@@ -6,6 +6,7 @@
   programs.zsh = {
     initContent = "
 export JAVA_HOME=${pkgs.jdk21}
+unalias gg
     ";
 
     shellAliases = {
