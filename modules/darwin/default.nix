@@ -34,7 +34,7 @@
       # firmness level for force touch
       SecondClickThreshold = 1;
       # don't allow positional right click
-      TrackpadRightClick = false;
+      TrackpadRightClick = true;
     };
     LaunchServices = {
       LSQuarantine = false;

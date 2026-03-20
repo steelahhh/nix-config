@@ -3,6 +3,7 @@
   home.packages = [
     pkgs.jetbrains-toolbox
     pkgs.git
+    pkgs.git-lfs
   ];
 
   imports = [
