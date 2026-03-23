@@ -32,7 +32,7 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     catppuccin.url = "github:catppuccin/nix";
-    nix-flatpak.url = "github:in-a-dil-emma/declarative-flatpak/stable-v3";
+    nix-flatpak.url = "github:in-a-dil-emma/declarative-flatpak/latest";
   };
 
   outputs =
