@@ -7,6 +7,10 @@
     ./hyprpaper.nix
   ];
 
+  home.packages = [
+    pkgs.zed-editor
+  ];
+
   programs.rofi = {
     enable = true;
     theme = "Arc-Dark";
