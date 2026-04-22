@@ -14,20 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
-
     mac-app-util.url = "github:hraban/mac-app-util";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -41,7 +27,6 @@
       home-manager,
       mac-app-util,
       nix-flatpak,
-      nix-homebrew,
       nixos-hardware,
       nixpkgs,
       ...
@@ -59,21 +44,6 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ];
-          }
-          nix-homebrew.darwinModules.nix-homebrew
-          {
-            nix-homebrew = {
-              enable = true;
-              enableRosetta = false;
-              autoMigrate = true;
-              mutableTaps = true;
-              user = "Ignis";
-              taps = with inputs; {
-                "homebrew/homebrew-core" = homebrew-core;
-                "homebrew/homebrew-cask" = homebrew-cask;
-                "homebrew/homebrew-bundle" = homebrew-bundle;
-              };
-            };
           }
           ./modules/darwin
           ./hosts/darwin

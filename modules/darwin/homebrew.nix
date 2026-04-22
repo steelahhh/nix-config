@@ -1,43 +1,32 @@
-{ ... }:
+{ self, ... }:
 {
-  homebrew = {
-    enable = true;
-    onActivation = {
-      cleanup = "zap";
-      autoUpdate = true;
-      upgrade = true;
-    };
-    global.autoUpdate = true;
+  # Manage homebrew manually
+  homebrew.enable = false;
 
-    brews = [
-      "mas"
-      "cocoapods"
-      "swiftgen"
-      "scrcpy"
-      "gradle-profiler"
-      "mrmans0n/tap/gg-stack"
-    ];
-    taps = [
-      #"FelixKratz/formulae" #sketchybar
-    ];
-    casks = [
-      "aerospace"
-      "ghostty"
-      "marta"
-      "openmtp"
-      "slack"
-      "zen"
-      "android-platform-tools"
-    ];
-    masApps = {
-      "NepTunes" = 1006739057;
-      "Amphetamine" = 937984704;
-      "Keynote" = 409183694;
-      "Numbers" = 409203825;
-      "Pages" = 409201541;
-      "Irvue" = 1039633667;
-      "Ghostery" = 6504861501;
-      "Proton Pass for Safari" = 6502835663;
-    };
-  };
+  # Activation runs as root; drop to the login user for brew.
+  system.activationScripts.postActivation.text = ''
+    # nix-darwin's activation framework redirects this script's stdio.
+    # Route our output to the controlling terminal so it shows up live.
+    exec > /dev/tty 2>&1
+
+    USER_NAME="ignis"
+    BREW=/opt/homebrew/bin/brew
+    as_user() { /usr/bin/sudo -u "$USER_NAME" -H "$@"; }
+    log() { echo ">>> $*"; }
+
+    if ! [ -x "$BREW" ]; then
+      log "Installing Homebrew..."
+      as_user /usr/bin/env NONINTERACTIVE=1 /bin/bash -c \
+        "$(/usr/bin/curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    log "brew update / upgrade..."
+    # Tolerate network/formula hiccups — don't block darwin-rebuild.
+    as_user "$BREW" update  || log "brew update failed (continuing)"
+    as_user "$BREW" upgrade || log "brew upgrade failed (continuing)"
+
+    log "brew bundle install..."
+    # Intentionally NOT tolerant: bundle drift is what we're enforcing.
+    as_user "$BREW" bundle install --file=${self}/Brewfile
+  '';
 }
