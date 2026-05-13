@@ -7,6 +7,8 @@ brew "gradle-profiler"
 brew "mrmans0n/tap/gg-stack"
 brew "lazygit"
 
+cask "shottr"
+cask "linearmouse"
 cask "nikitabobko/tap/aerospace"
 cask "ghostty"
 cask "marta"
