@@ -15,6 +15,12 @@
     pkgs.gh
     pkgs.ruby
     pkgs.nh
+    pkgs.eza
+    pkgs.bat
+    pkgs.zoxide
+    pkgs.ripgrep
+    pkgs.yazi
+    pkgs.delta
   ];
 
   fonts.packages = [
