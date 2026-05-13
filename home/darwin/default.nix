@@ -1,13 +1,17 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   imports = [ ../common.nix ];
 
-  # nix-darwin is silly so have to add JAVA_HOME manually
+  home.sessionVariables = {
+    ANDROID_HOME = "${config.home.homeDirectory}/Library/Android/sdk";
+    JAVA_HOME = "${pkgs.jdk21}";
+  };
+
   programs.zsh = {
-    initContent = "
-export JAVA_HOME=${pkgs.jdk21}
-unalias gg
-    ";
+    initContent = ''
+      unalias gg
+      eval "$(zoxide init zsh)"
+    '';
 
     shellAliases = {
       nos = "nh darwin switch /Users/ignis/nix-config";

@@ -6,10 +6,15 @@
     pkgs.git-lfs
   ];
 
+  home.sessionPath = [
+    "$HOME/.local/bin"
+  ];
+
   imports = [
     ./common/zed
     ./common/vim.nix
     ./common/shell.nix
+    ./common/zellij.nix
   ];
 
   programs.git = {

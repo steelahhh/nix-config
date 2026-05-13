@@ -43,6 +43,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "bkp";
             home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ];
           }
           ./modules/darwin
