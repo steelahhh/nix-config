@@ -26,6 +26,7 @@
   fonts.packages = [
     pkgs.monaspace
     pkgs.nerd-fonts.monaspace
+    pkgs.ioskeley-mono.normal
   ];
 
 }
