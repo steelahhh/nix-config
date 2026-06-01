@@ -2,7 +2,7 @@
 {
   programs.zellij = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false;
     settings = {
       default_shell = "zsh";
       pane_frames = false;
@@ -14,6 +14,6 @@
   };
 
   programs.zsh.sessionVariables = {
-    ZELLIJ_AUTO_ATTACH = "true";
+    ZELLIJ_AUTO_ATTACH = "false";
   };
 }
