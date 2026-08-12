@@ -14,6 +14,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mac-app-util.url = "github:hraban/mac-app-util";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -23,6 +28,7 @@
 
   outputs =
     {
+      agenix,
       catppuccin,
       home-manager,
       mac-app-util,
@@ -44,7 +50,10 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bkp";
-            home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ];
+            home-manager.sharedModules = [
+              mac-app-util.homeManagerModules.default
+              agenix.homeManagerModules.default
+            ];
           }
           ./modules/darwin
           ./hosts/darwin
