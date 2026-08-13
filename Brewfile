@@ -8,6 +8,8 @@ brew "mrmans0n/tap/gg-stack"
 brew "lazygit"
 
 cask "1Password"
+cask "itsycal"
+cask "claude"
 cask "google-chrome"
 cask "shottr"
 cask "linearmouse"
