@@ -13,6 +13,7 @@
   imports = [
     ./common/zed
     ./common/ghostty
+    ./common/lazygit.nix
     ./common/vim.nix
     ./common/shell.nix
     ./common/zellij.nix
