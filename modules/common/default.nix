@@ -15,6 +15,7 @@
     pkgs.gh
     pkgs.ruby
     pkgs.nh
+    pkgs.nodejs
     pkgs.eza
     pkgs.bat
     pkgs.zoxide
@@ -26,7 +27,7 @@
   fonts.packages = [
     pkgs.monaspace
     pkgs.nerd-fonts.monaspace
-    pkgs.ioskeley-mono.normal
+    pkgs.ioskeley-mono.standard
   ];
 
 }
