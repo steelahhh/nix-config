@@ -10,4 +10,17 @@
       MusicFolder = "/srv/music";
     };
   };
+
+  # Password is separate from the login: sudo smbpasswd -a sasha
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings.music = {
+      path = "/srv/music";
+      "valid users" = "sasha";
+      "read only" = "no";
+      "create mask" = "0664";
+      "directory mask" = "0775";
+    };
+  };
 }
