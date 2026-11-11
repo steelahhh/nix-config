@@ -15,12 +15,19 @@
   services.samba = {
     enable = true;
     openFirewall = true;
-    settings.music = {
-      path = "/srv/music";
-      "valid users" = "sasha";
-      "read only" = "no";
-      "create mask" = "0664";
-      "directory mask" = "0775";
-    };
+    settings =
+      let
+        share = path: {
+          inherit path;
+          "valid users" = "sasha";
+          "read only" = "no";
+          "create mask" = "0664";
+          "directory mask" = "0775";
+        };
+      in
+      {
+        music = share "/srv/music";
+        books = share "/srv/books";
+      };
   };
 }
