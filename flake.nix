@@ -82,7 +82,10 @@
 
       nixosConfigurations."homeserver" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./hosts/homeserver ];
+        modules = [
+          agenix.nixosModules.default
+          ./hosts/homeserver
+        ];
       };
     };
 }

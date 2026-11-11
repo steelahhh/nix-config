@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ./services.nix
+    ./bookorbit.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
