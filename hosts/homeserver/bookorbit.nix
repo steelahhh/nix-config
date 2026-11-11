@@ -12,7 +12,8 @@ in
 
   systemd.tmpfiles.rules = [
     "d /var/lib/bookorbit/app 0750 sasha users -"
-    "d /var/lib/bookorbit/postgres 0700 root root -"
+    # Postgres (container uid 999) must traverse this; its pgdata subfolder is 0700.
+    "d /var/lib/bookorbit/postgres 0755 root root -"
   ];
 
   # Shared network so the app reaches the database by container name.
