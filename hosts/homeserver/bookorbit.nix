@@ -35,7 +35,7 @@ in
   virtualisation.oci-containers.containers = {
     # shortcut: raw Postgres files get backed up while running; add a pg_dump before the USB backup phase.
     bookorbit-db = {
-      image = "pgvector/pgvector:pg18";
+      image = "docker.io/pgvector/pgvector:pg18";
       environment = db // {
         PGDATA = "/var/lib/postgresql/data/pgdata";
       };
