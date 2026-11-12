@@ -21,7 +21,10 @@ in
 
   virtualisation.oci-containers.containers = {
     gluetun = {
-      image = "docker.io/qmcgaw/gluetun:v3.41.3";
+      # v3.41.x restart-loops on Proton: the tunnel passes traffic only after
+      # the ~6s startup healthcheck window (ICMP blocked → MTU discovery slow).
+      # https://github.com/qdm12/gluetun/issues/3069 — v3.40.0 is the fix.
+      image = "docker.io/qmcgaw/gluetun:v3.40.0";
       environment = {
         VPN_SERVICE_PROVIDER = "protonvpn";
         VPN_TYPE = "wireguard";
