@@ -82,6 +82,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bkp";
+            home-manager.sharedModules = [ agenix.homeManagerModules.default ];
           }
           nixos-hardware.nixosModules.lenovo-legion-16ach6h-nvidia
           ./hosts/nixos
