@@ -2,7 +2,7 @@
 {
   imports = [
     ../common
-    ./hyprland.nix
+    ./cosmic.nix
     ./gaming.nix
     ./flatpak.nix
   ];
@@ -14,6 +14,8 @@
   environment.systemPackages = with pkgs; [
     git
     unzip
+
+    helium
 
     ghostty
     calibre
@@ -27,7 +29,7 @@
 
     catppuccin-cursors.mochaDark
 
-    protonvpn-gui
+    proton-vpn
 
     kdePackages.dolphin
     kdePackages.dolphin-plugins
@@ -36,6 +38,8 @@
     openrazer-daemon
     lenovo-legion
     linuxKernel.packages.linux_zen.lenovo-legion-module
+
+    gparted
   ];
 
   programs.zsh.enable = true;

@@ -4,6 +4,11 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    helium-flake = {
+      url = "github:oxcl/nix-flake-helium-browser";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -30,6 +35,7 @@
     {
       agenix,
       catppuccin,
+      helium-flake,
       home-manager,
       mac-app-util,
       nix-flatpak,
@@ -67,7 +73,10 @@
           inherit inputs;
         };
         modules = [
-          nix-flatpak.nixosModule
+          {
+            nixpkgs.overlays = [ helium-flake.overlays.default ];
+          }
+          nix-flatpak.nixosModules.default
           home-manager.nixosModules.default
           {
             home-manager.useGlobalPkgs = true;

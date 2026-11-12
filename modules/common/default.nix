@@ -27,7 +27,11 @@
   fonts.packages = [
     pkgs.monaspace
     pkgs.nerd-fonts.monaspace
+<<<<<<< HEAD
     pkgs.ioskeley-mono.standard
+=======
+    pkgs.ioskeley-mono
+>>>>>>> 3815c17 (feat(nix): cosmic wip)
   ];
 
 }

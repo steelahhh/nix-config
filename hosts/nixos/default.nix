@@ -44,6 +44,8 @@
     pulse.enable = true;
   };
 
+  services.tailscale.enable = true;
+
   users.users.sasha = {
     isNormalUser = true;
     description = "sasha";
