@@ -23,7 +23,6 @@ cask "openmtp"
 cask "slack"
 cask "zen"
 cask "zed"
-cask "tailscale-app"
 cask "android-platform-tools"
 cask "1password"
 
