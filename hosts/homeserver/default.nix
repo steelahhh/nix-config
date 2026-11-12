@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ./services.nix
     ./bookorbit.nix
+    ./arr.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

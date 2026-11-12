@@ -14,4 +14,8 @@ in
     ignis
     homeserver
   ];
+  "protonvpn-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }

@@ -42,6 +42,24 @@
               description = "Books";
             };
           }
+          {
+            "Lidarr" = {
+              href = "http://homeserver:8686";
+              description = "Music automation";
+            };
+          }
+          {
+            "Prowlarr" = {
+              href = "http://homeserver:9696";
+              description = "Torrent indexers (VPN)";
+            };
+          }
+          {
+            "Decypharr" = {
+              href = "http://homeserver:8282";
+              description = "TorBox / RealDebrid gateway";
+            };
+          }
         ];
       }
       {
