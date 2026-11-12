@@ -40,6 +40,8 @@
     linuxKernel.packages.linux_zen.lenovo-legion-module
 
     gparted
+
+    qwen-code
   ];
 
   programs.zsh.enable = true;
