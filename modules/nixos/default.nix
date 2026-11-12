@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   imports = [
     ../common
@@ -41,8 +41,16 @@
 
     gparted
 
-    qwen-code
+    # nixpkgs lags behind; Qwen subscription sign-in needs >= 0.26.8
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.qwen-code
   ];
+
+  nix.settings = {
+    extra-substituters = [ "https://cache.numtide.com" ];
+    extra-trusted-public-keys = [
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+    ];
+  };
 
   programs.zsh.enable = true;
   services.gvfs.enable = true;
