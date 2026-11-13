@@ -8,7 +8,6 @@
   ];
 
   home.packages = [
-    pkgs.zed-editor
   ];
 
   programs.rofi = {

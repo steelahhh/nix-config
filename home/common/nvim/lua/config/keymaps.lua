@@ -1,4 +1,4 @@
--- Ported from home/common/idea.vimrc and home/common/zed/keymap.json
+-- Ported from home/common/idea.vimrc and the old Zed keymap
 local map = vim.keymap.set
 
 -- Zed
