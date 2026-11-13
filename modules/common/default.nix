@@ -6,6 +6,12 @@
   ];
   nixpkgs.config.allowUnfree = true;
 
+  # system-wide too, so root and sudo shells get nvim instead of nano
+  environment.variables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
   environment.systemPackages = [
     pkgs.neovim
     pkgs.hyfetch
