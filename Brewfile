@@ -20,13 +20,10 @@ cask "android/tap/android-cli"
 cask "docker/tap/sbx"
 cask "slack"
 cask "zen"
-cask "zed"
 cask "android-platform-tools"
 cask "1password"
 
 mas "NepTunes", id: 1006739057
-mas "Amphetamine", id: 937984704
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
-mas "Irvue", id: 1039633667
