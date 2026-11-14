@@ -76,7 +76,22 @@
         };
         modules = [
           {
-            nixpkgs.overlays = [ helium-flake.overlays.default ];
+            nixpkgs.overlays = [
+              helium-flake.overlays.default
+              # localsend 1.18.0 links libz but zlib is missing from its
+              # RUNPATH, so the binary dies on startup; re-wrap with zlib.
+              (final: prev: {
+                localsend = prev.symlinkJoin {
+                  name = "localsend-${prev.localsend.version}-zlib-fix";
+                  paths = [ prev.localsend ];
+                  nativeBuildInputs = [ prev.makeWrapper ];
+                  postBuild = ''
+                    wrapProgram $out/bin/localsend_app \
+                      --prefix LD_LIBRARY_PATH : ${prev.lib.makeLibraryPath [ prev.zlib ]}
+                  '';
+                };
+              })
+            ];
           }
           nix-flatpak.nixosModules.default
           home-manager.nixosModules.default

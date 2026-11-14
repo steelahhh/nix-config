@@ -54,4 +54,9 @@
 
   programs.zsh.enable = true;
   services.gvfs.enable = true;
+
+  programs.localsend = {
+    enable = true;
+    openFirewall = true;
+  };
 }
