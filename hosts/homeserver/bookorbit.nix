@@ -82,7 +82,24 @@ in
         "--security-opt=no-new-privileges"
       ];
     };
+
+    # Solves DDoS-Guard challenges for BookOrbit's Anna's Archive plugin.
+    # Stateless, so no volumes; LAN/tailnet-only like the other services.
+    flaresolverr = {
+      image = "ghcr.io/flaresolverr/flaresolverr:v3.5.2";
+      ports = [ "8191:8191" ];
+      environment = {
+        LOG_LEVEL = "info";
+        TZ = config.time.timeZone;
+      };
+      # Chrome writes a throwaway profile per request; upstream recommends
+      # keeping /tmp in RAM to avoid SSD wear.
+      extraOptions = [ "--tmpfs=/tmp:size=256M,mode=1777" ];
+    };
   };
 
-  networking.firewall.allowedTCPPorts = [ 3030 ];
+  networking.firewall.allowedTCPPorts = [
+    3030 # BookOrbit
+    8191 # FlareSolverr
+  ];
 }
