@@ -68,8 +68,12 @@ in
         "/var/lib/bookorbit/app:/data"
       ];
       networks = [ "bookorbit" ];
-      # Same hardening as upstream's compose file.
       extraOptions = [
+        # NixOS maps the hostname to 127.0.0.2 in /etc/hosts and podman's DNS
+        # mirrors that into the container, so "homeserver" would point at the
+        # container's own loopback. Resolve it to the host instead (Prowlarr).
+        "--add-host=homeserver:host-gateway"
+        # Same hardening as upstream's compose file.
         "--init"
         "--read-only"
         "--tmpfs=/tmp"
