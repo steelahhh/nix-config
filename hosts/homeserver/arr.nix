@@ -53,6 +53,8 @@ in
       };
       volumes = [ "/var/lib/prowlarr:/config" ];
       # No ports here: they are published on gluetun, whose netns this shares.
+      # podman rejects --add-host in a shared netns; reach host services
+      # (Lidarr) as host.containers.internal instead of homeserver.
       extraOptions = [ "--network=container:gluetun" ];
     };
 
@@ -71,6 +73,9 @@ in
       # Upstream requirements for its FUSE mounts; apparmor is not enabled on
       # NixOS, so no apparmor unconfined opt is needed.
       extraOptions = [
+        # NixOS maps the hostname to 127.0.0.2 in /etc/hosts and podman copies
+        # that into the container; resolve it to the host instead (Lidarr).
+        "--add-host=homeserver:host-gateway"
         "--device=/dev/fuse"
         "--cap-add=SYS_ADMIN"
       ];
