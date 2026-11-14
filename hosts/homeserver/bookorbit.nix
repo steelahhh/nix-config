@@ -1,7 +1,7 @@
 # BookOrbit (bookorbit.app): no NixOS module, so this mirrors upstream's docker-compose.yml.
 { config, pkgs, ... }:
 let
-  env = config.age.secrets.bookorbit-env.path; # POSTGRES_PASSWORD, JWT_SECRET, SETUP_BOOTSTRAP_TOKEN
+  env = config.age.secrets.bookorbit-env.path; # POSTGRES_PASSWORD, JWT_SECRET, SETUP_BOOTSTRAP_TOKEN, BOOK_REQUEST_ENCRYPTION_KEY
   db = {
     POSTGRES_USER = "bookorbit";
     POSTGRES_DB = "bookorbit";
