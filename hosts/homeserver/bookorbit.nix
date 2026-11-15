@@ -85,23 +85,27 @@ in
 
     # Solves anti-bot challenges for BookOrbit's Anna's Archive plugin
     # (FlareSolverr-compatible /v1 API, so the plugin's solver URL is
-    # unchanged). Shares gluetun's netns so AA sees an IVPN exit, not the
-    # home IP (user choice 2026-11-15); port 8191 is published on gluetun.
-    byparr = {
-      # v3.1.1, tested 2026-11-15. Upstream tags releases v*.*.*; bump
-      # deliberately and re-test Anna's Archive searches.
-      image = "ghcr.io/thephaseless/byparr@sha256:8170ab7b32d8df29b4b74f02707c503f5bd404c4f99d7e28972bef1595e59c66";
+    # unchanged). Trawl lists DDoS-Guard among its supported walls and
+    # escalates HTTP -> cached clearance -> fresh Camoufox solve. Shares
+    # gluetun's netns so AA sees an IVPN exit, not the home IP (user choice
+    # 2026-11-15); port 8191 is published on gluetun.
+    trawl = {
+      # Tagged releases; bump deliberately and re-test AA searches.
+      image = "ghcr.io/germondai/trawl:1.11.1";
       dependsOn = [ "gluetun" ];
       environment = {
-        PORT = "8191";
+        # Single-process clearance cache; no Redis sidecar.
+        SESSION_CACHE_DRIVER = "memory";
+        BROWSER_POOL_SIZE = "1";
         TZ = config.time.timeZone;
       };
       extraOptions = [
         # No ports here: they are published on gluetun, whose netns this
         # shares (podman rejects port publishing on a joined netns).
         "--network=container:gluetun"
-        # Camoufox needs shared memory; /tmp in RAM avoids SSD wear.
-        "--shm-size=512m"
+        # Camoufox needs shared memory (upstream asks for 1g); /tmp in RAM
+        # avoids SSD wear.
+        "--shm-size=1g"
         "--tmpfs=/tmp:size=512M,mode=1777"
       ];
     };
@@ -109,6 +113,6 @@ in
 
   networking.firewall.allowedTCPPorts = [
     3030 # BookOrbit
-    8191 # Byparr (Anna's Archive)
+    8191 # Trawl (Anna's Archive)
   ];
 }
