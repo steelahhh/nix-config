@@ -38,12 +38,10 @@ in
         TZ = config.time.timeZone;
       };
       environmentFiles = [ vpnEnv ];
-      # Prowlarr UI and ddg-fetcher (BookOrbit's AA solver) publish through
-      # this netns; both containers join it with --network=container:gluetun.
-      ports = [
-        "9696:9696"
-        "8191:8191"
-      ];
+      # Prowlarr UI publishes through this netns; it joins with
+      # --network=container:gluetun. Torrent points stay on the VPN; the
+      # AA solver runs direct by user choice 2026-11-15.
+      ports = [ "9696:9696" ];
       volumes = [ "/var/lib/gluetun:/gluetun" ];
       extraOptions = [
         "--cap-add=NET_ADMIN"
