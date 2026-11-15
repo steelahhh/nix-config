@@ -83,27 +83,19 @@ in
       ];
     };
 
-    # Fetches Anna's Archive pages for BookOrbit's plugin, waiting out
-    # DDoS-Guard's JS check in a persistent Camoufox context. FlareSolverr
-    # gets a manual CAPTCHA it cannot pass; plain Byparr returns the
-    # interstitial (its waits are Cloudflare-only). ddg-fetcher.py speaks
-    # just enough of FlareSolverr's /v1 API that the plugin's solver URL is
-    # unchanged. Shares gluetun's netns so AA sees an IVPN exit, not the
+    # Solves anti-bot challenges for BookOrbit's Anna's Archive plugin
+    # (FlareSolverr-compatible /v1 API, so the plugin's solver URL is
+    # unchanged). Shares gluetun's netns so AA sees an IVPN exit, not the
     # home IP (user choice 2026-11-15); port 8191 is published on gluetun.
-    ddg-fetcher = {
-      # Byparr v3.1.1. Upstream publishes no version tags (only latest/main),
-      # so pin the tested digest; bump deliberately and re-test the fetcher.
+    byparr = {
+      # v3.1.1, tested 2026-11-15. Upstream tags releases v*.*.*; bump
+      # deliberately and re-test Anna's Archive searches.
       image = "ghcr.io/thephaseless/byparr@sha256:8170ab7b32d8df29b4b74f02707c503f5bd404c4f99d7e28972bef1595e59c66";
       dependsOn = [ "gluetun" ];
-      entrypoint = "/app/.venv/bin/python";
-      cmd = [ "/app/ddg-fetcher.py" ];
       environment = {
         PORT = "8191";
-        # Solve the check at startup so the first real search is already warm.
-        WARM_URL = "https://annas-archive.gl/search?index=&page=1&display=table&acc=aa_download&acc=external_download&ext=epub&ext=mobi&ext=azw3&q=dune";
         TZ = config.time.timeZone;
       };
-      volumes = [ "${./ddg-fetcher.py}:/app/ddg-fetcher.py:ro" ];
       extraOptions = [
         # No ports here: they are published on gluetun, whose netns this
         # shares (podman rejects port publishing on a joined netns).
@@ -111,15 +103,12 @@ in
         # Camoufox needs shared memory; /tmp in RAM avoids SSD wear.
         "--shm-size=512m"
         "--tmpfs=/tmp:size=512M,mode=1777"
-        # The entrypoint override bypasses the image's tini; reap browser
-        # children with podman's init instead.
-        "--init"
       ];
     };
   };
 
   networking.firewall.allowedTCPPorts = [
     3030 # BookOrbit
-    8191 # ddg-fetcher (Anna's Archive)
+    8191 # Byparr (Anna's Archive)
   ];
 }
