@@ -18,4 +18,8 @@ in
     ignis
     homeserver
   ];
+  "ivpn-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }

@@ -2,13 +2,15 @@
 # Decypharr, which poses as qBittorrent but hands torrents to TorBox (RealDebrid
 # can be added in its wizard later). The torrenting happens at the debrid
 # provider, so only Prowlarr's indexer traffic needs the VPN: it shares
-# Gluetun's network namespace, which kills anything not going through Proton.
+# Gluetun's network namespace, which kills anything not going through IVPN.
+# ddg-fetcher (BookOrbit's Anna's Archive solver) also joins this netns so AA
+# sees an IVPN exit; BookOrbit itself stays direct.
 { config, ... }:
 let
-  vpnEnv = config.age.secrets.protonvpn-env.path; # WIREGUARD_PRIVATE_KEY, WIREGUARD_ADDRESSES
+  vpnEnv = config.age.secrets.ivpn-env.path; # WIREGUARD_PRIVATE_KEY, WIREGUARD_ADDRESSES, WIREGUARD_PRESHARED_KEY
 in
 {
-  age.secrets.protonvpn-env.file = ../../secrets/protonvpn-env.age;
+  age.secrets.ivpn-env.file = ../../secrets/ivpn-env.age;
 
   systemd.tmpfiles.rules = [
     "d /var/lib/gluetun 0700 root root -"
@@ -21,21 +23,27 @@ in
 
   virtualisation.oci-containers.containers = {
     gluetun = {
-      # v3.41.x restart-loops on Proton: the tunnel passes traffic only after
-      # the ~6s startup healthcheck window (ICMP blocked → MTU discovery slow).
-      # https://github.com/qdm12/gluetun/issues/3069 — v3.40.0 is the fix.
+      # Keep v3.40.0: verified with IVPN 2026-11-15. (On Proton, v3.41.x
+      # restart-looped: traffic only passed after the ~6s startup healthcheck
+      # window — https://github.com/qdm12/gluetun/issues/3069.)
       image = "docker.io/qmcgaw/gluetun:v3.40.0";
       environment = {
-        VPN_SERVICE_PROVIDER = "protonvpn";
+        VPN_SERVICE_PROVIDER = "ivpn";
         VPN_TYPE = "wireguard";
-        SERVER_COUNTRIES = "Lithuania,Latvia,Estonia";
+        # IVPN has no Baltic servers; Nordic-adjacent pool chosen 2026-11-15.
+        SERVER_COUNTRIES = "Sweden,Finland,Denmark,Poland";
         # Kill switch exceptions: LAN and Tailscale clients may reach the
         # Prowlarr UI, and Prowlarr may reach Lidarr on the host.
         FIREWALL_OUTBOUND_SUBNETS = "192.168.1.0/24,100.64.0.0/10";
         TZ = config.time.timeZone;
       };
       environmentFiles = [ vpnEnv ];
-      ports = [ "9696:9696" ]; # Prowlarr UI, published through the VPN netns
+      # Prowlarr UI and ddg-fetcher (BookOrbit's AA solver) publish through
+      # this netns; both containers join it with --network=container:gluetun.
+      ports = [
+        "9696:9696"
+        "8191:8191"
+      ];
       volumes = [ "/var/lib/gluetun:/gluetun" ];
       extraOptions = [
         "--cap-add=NET_ADMIN"
