@@ -5,6 +5,7 @@
     ./services.nix
     ./bookorbit.nix
     ./arr.nix
+    ./usenet.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

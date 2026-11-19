@@ -66,6 +66,9 @@ in
       volumes = [
         "/srv/books:/books"
         "/var/lib/bookorbit/app:/data"
+        # SABnzbd reports completed Usenet grabs at this path and BookOrbit
+        # imports from it, so it must exist identically inside the container.
+        "/srv/downloads/sabnzbd/complete:/srv/downloads/sabnzbd/complete"
       ];
       networks = [ "bookorbit" ];
       extraOptions = [

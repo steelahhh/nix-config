@@ -51,13 +51,19 @@
           {
             "Prowlarr" = {
               href = "http://homeserver:9696";
-              description = "Torrent indexers (VPN)";
+              description = "Torrent/Usenet indexers (VPN)";
             };
           }
           {
             "Decypharr" = {
               href = "http://homeserver:8282";
-              description = "TorBox / RealDebrid gateway";
+              description = "Debrid / Usenet gateway";
+            };
+          }
+          {
+            "SABnzbd" = {
+              href = "http://homeserver:8080";
+              description = "Usenet downloads";
             };
           }
         ];
