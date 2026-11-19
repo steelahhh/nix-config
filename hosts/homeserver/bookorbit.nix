@@ -69,7 +69,7 @@ in
         # Same path inside and out: BookOrbit imports completed grabs from the
         # storage path SABnzbd reports. Mount the parent, not complete/: podman
         # auto-creates a missing top-level bind source but fails on nested paths,
-        # and tmpfiles rules only apply at boot, not during a switch.
+        # and the switch-time tmpfiles re-setup races with container restarts.
         "/srv/downloads/sabnzbd:/srv/downloads/sabnzbd"
       ];
       networks = [ "bookorbit" ];
