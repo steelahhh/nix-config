@@ -66,9 +66,11 @@ in
       volumes = [
         "/srv/books:/books"
         "/var/lib/bookorbit/app:/data"
-        # SABnzbd reports completed Usenet grabs at this path and BookOrbit
-        # imports from it, so it must exist identically inside the container.
-        "/srv/downloads/sabnzbd/complete:/srv/downloads/sabnzbd/complete"
+        # Same path inside and out: BookOrbit imports completed grabs from the
+        # storage path SABnzbd reports. Mount the parent, not complete/: podman
+        # auto-creates a missing top-level bind source but fails on nested paths,
+        # and tmpfiles rules only apply at boot, not during a switch.
+        "/srv/downloads/sabnzbd:/srv/downloads/sabnzbd"
       ];
       networks = [ "bookorbit" ];
       extraOptions = [

@@ -8,8 +8,11 @@
   systemd.tmpfiles.rules = [
     "d /var/lib/sabnzbd 0750 sasha users -"
     # Same path inside and outside the container: BookOrbit imports completed
-    # grabs from the storage path SABnzbd reports, so it mounts complete/ at
-    # the identical path (see bookorbit.nix).
+    # grabs from the storage path SABnzbd reports, so it mounts this tree at
+    # the identical path (see bookorbit.nix). The parent needs its own rule:
+    # created implicitly (by tmpfiles or podman) it stays root-owned, which
+    # makes tmpfiles refuse the leaf rules as an unsafe path transition.
+    "d /srv/downloads/sabnzbd 0775 sasha users -"
     "d /srv/downloads/sabnzbd/incomplete 0775 sasha users -"
     "d /srv/downloads/sabnzbd/complete 0775 sasha users -"
   ];
