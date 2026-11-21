@@ -9,6 +9,7 @@ brew "lazygit"
 
 cask "1Password"
 cask "claude"
+cask "figma"
 cask "google-chrome"
 cask "linearmouse"
 cask "nikitabobko/tap/aerospace"

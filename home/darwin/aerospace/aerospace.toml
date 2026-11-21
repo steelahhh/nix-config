@@ -1,4 +1,9 @@
 # Reference: https://github.com/i3/i3/blob/next/etc/config
+config-version = 2
+
+# v1 inferred these from the alt-N bindings; v2 needs them listed.
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+
 accordion-padding = 30
 
 enable-normalization-flatten-containers = true
@@ -64,6 +69,10 @@ alt-r = 'mode resize'
 [[on-window-detected]]
 if.app-id = 'com.figma.Desktop'
 run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'com.anthropic.claudefordesktop'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
