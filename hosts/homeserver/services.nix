@@ -1,13 +1,23 @@
 { ... }:
 {
+  # Apple Music playlist imports (.m3u8) land here, written as sasha over
+  # SSH. Inside MusicFolder, so Navidrome's sandbox binds it read-only —
+  # imports work; playlists edited in the UI stay in its database only.
+  systemd.tmpfiles.rules = [
+    "d /srv/music/playlists 0775 sasha users -"
+  ];
+
   services.navidrome = {
     enable = true;
     openFirewall = true;
+    # ListenBrainz scrobbling is built in: per-user token in the UI, no env.
+    withPlugins = p: [ p.listenbrainz-daily-playlist ];
     settings = {
       # Default is localhost only; this opens it to the LAN and Tailscale.
       Address = "0.0.0.0";
       Port = 4533;
       MusicFolder = "/srv/music";
+      PlaylistsPath = "/srv/music/playlists";
     };
   };
 
@@ -64,6 +74,24 @@
             "SABnzbd" = {
               href = "http://homeserver:8080";
               description = "Usenet downloads";
+            };
+          }
+          {
+            "slskd" = {
+              href = "http://homeserver:5030";
+              description = "Soulseek (VPN, download-only)";
+            };
+          }
+          {
+            "Soularr" = {
+              href = "http://homeserver:8265";
+              description = "Soulseek automation";
+            };
+          }
+          {
+            "digarr" = {
+              href = "http://homeserver:5000";
+              description = "Music discovery";
             };
           }
         ];

@@ -6,6 +6,8 @@
     ./bookorbit.nix
     ./arr.nix
     ./usenet.nix
+    ./soulseek.nix
+    ./discovery.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

@@ -1,8 +1,8 @@
 # Music grabbing stack: Lidarr searches via Prowlarr and "downloads" through
 # Decypharr, which poses as qBittorrent but hands torrents to TorBox (RealDebrid
 # can be added in its wizard later). The torrenting happens at the debrid
-# provider, so only Prowlarr's indexer traffic needs the VPN: it shares
-# Gluetun's network namespace, which kills anything not going through IVPN.
+# provider, so indexer traffic (Prowlarr) and Soulseek P2P (slskd) ride the
+# VPN: both share Gluetun's netns, which kills anything not going through IVPN.
 # ddg-fetcher (BookOrbit's Anna's Archive solver) also joins this netns so AA
 # sees an IVPN exit; BookOrbit itself stays direct.
 { config, ... }:
@@ -38,10 +38,13 @@ in
         TZ = config.time.timeZone;
       };
       environmentFiles = [ vpnEnv ];
-      # Prowlarr UI publishes through this netns; it joins with
-      # --network=container:gluetun. Torrent points stay on the VPN; the
-      # AA solver runs direct by user choice 2026-11-15.
-      ports = [ "9696:9696" ];
+      # Prowlarr and slskd UIs publish through this netns; both join with
+      # --network=container:gluetun. Torrent points and Soulseek stay on the
+      # VPN; the AA solver runs direct by user choice 2026-11-15.
+      ports = [
+        "9696:9696" # Prowlarr
+        "5030:5030" # slskd
+      ];
       volumes = [ "/var/lib/gluetun:/gluetun" ];
       extraOptions = [
         "--cap-add=NET_ADMIN"
@@ -98,6 +101,7 @@ in
 
   networking.firewall.allowedTCPPorts = [
     9696 # Prowlarr (via gluetun)
+    5030 # slskd (via gluetun)
     8282 # Decypharr
   ];
 }

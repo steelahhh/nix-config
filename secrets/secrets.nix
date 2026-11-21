@@ -22,4 +22,12 @@ in
     ignis
     homeserver
   ];
+  "slskd-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
+  "digarr-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }
