@@ -8,8 +8,6 @@ let
   homeserver = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFERt4iNMqgI4rFyy//BCLLl/5DwjjyVaouyfm5lErfM";
 in
 {
-  "jira_token.age".publicKeys = [ ignis ];
-  "jira_email.age".publicKeys = [ ignis ];
   "bookorbit-env.age".publicKeys = [
     ignis
     homeserver
