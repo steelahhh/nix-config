@@ -5,7 +5,7 @@
 # VPN: both share Gluetun's netns, which kills anything not going through IVPN.
 # ddg-fetcher (BookOrbit's Anna's Archive solver) also joins this netns so AA
 # sees an IVPN exit; BookOrbit itself stays direct.
-{ config, ... }:
+{ config, username, ... }:
 let
   vpnEnv = config.age.secrets.ivpn-env.path; # WIREGUARD_PRIVATE_KEY, WIREGUARD_ADDRESSES, WIREGUARD_PRESHARED_KEY
 in
@@ -14,11 +14,11 @@ in
 
   systemd.tmpfiles.rules = [
     "d /var/lib/gluetun 0700 root root -"
-    "d /var/lib/prowlarr 0750 sasha users -"
-    "d /var/lib/decypharr 0750 sasha users -"
+    "d /var/lib/prowlarr 0750 ${username} users -"
+    "d /var/lib/decypharr 0750 ${username} users -"
     # Decypharr writes here, Lidarr imports into /srv/music; same path inside
     # and outside the container so no remote path mapping is needed in Lidarr.
-    "d /srv/downloads 0775 sasha users -"
+    "d /srv/downloads 0775 ${username} users -"
   ];
 
   virtualisation.oci-containers.containers = {
@@ -94,7 +94,7 @@ in
   services.lidarr = {
     enable = true;
     # Matches /srv ownership and Decypharr's PUID/PGID so imports just work.
-    user = "sasha";
+    user = username;
     group = "users";
     openFirewall = true;
   };

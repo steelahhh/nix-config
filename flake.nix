@@ -78,6 +78,7 @@
         specialArgs = {
           self = inputs.self;
           inherit inputs;
+          username = "sasha";
         };
         modules = [
           {
@@ -114,6 +115,9 @@
 
       nixosConfigurations."homeserver" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = {
+          username = "sasha";
+        };
         modules = [
           agenix.nixosModules.default
           ./hosts/homeserver

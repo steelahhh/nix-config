@@ -1,10 +1,10 @@
-{ ... }:
+{ username, ... }:
 {
   # Apple Music playlist imports (.m3u8) land here, written as sasha over
   # SSH. Inside MusicFolder, so Navidrome's sandbox binds it read-only —
   # imports work; playlists edited in the UI stay in its database only.
   systemd.tmpfiles.rules = [
-    "d /srv/music/playlists 0775 sasha users -"
+    "d /srv/music/playlists 0775 ${username} users -"
   ];
 
   services.navidrome = {
@@ -129,7 +129,7 @@
       let
         share = path: {
           inherit path;
-          "valid users" = "sasha";
+          "valid users" = username;
           "read only" = "no";
           "create mask" = "0664";
           "directory mask" = "0775";

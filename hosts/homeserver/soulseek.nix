@@ -4,7 +4,7 @@
 # client entry needed). IVPN has no port forwarding (removed 2023), so slskd
 # is download-only: the share mount and listen port are configured, but peers
 # cannot connect in. See docs/navidrome-music-stack-plan.md.
-{ config, ... }:
+{ config, username, ... }:
 let
   # SLSKD_SLSK_USERNAME, SLSKD_SLSK_PASSWORD, SLSKD_API_KEY (Administrator
   # role by default — soularr needs write access), SLSKD_USERNAME, SLSKD_PASSWORD
@@ -14,12 +14,12 @@ in
   age.secrets.slskd-env.file = ../../secrets/slskd-env.age;
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/slskd 0750 sasha users -"
-    "d /var/lib/soularr 0750 sasha users -"
+    "d /var/lib/slskd 0750 ${username} users -"
+    "d /var/lib/soularr 0750 ${username} users -"
     # /srv/downloads itself is created by arr.nix; slskd requires the
     # download dirs to exist and be writable before startup.
-    "d /srv/downloads/slskd 0775 sasha users -"
-    "d /srv/downloads/slskd-incomplete 0775 sasha users -"
+    "d /srv/downloads/slskd 0775 ${username} users -"
+    "d /srv/downloads/slskd-incomplete 0775 ${username} users -"
   ];
 
   virtualisation.oci-containers.containers = {

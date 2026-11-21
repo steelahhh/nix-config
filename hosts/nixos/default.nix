@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, username, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -46,9 +46,9 @@
 
   services.tailscale.enable = true;
 
-  users.users.sasha = {
+  users.users.${username} = {
     isNormalUser = true;
-    description = "sasha";
+    description = username;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -57,10 +57,10 @@
     shell = pkgs.zsh;
   };
 
-  home-manager.users.sasha = {
+  home-manager.users.${username} = {
     imports = [ ../../home/nixos/default.nix ];
     home.stateVersion = "25.05";
-    home.username = "sasha";
+    home.username = username;
   };
 
   system.stateVersion = "25.05";

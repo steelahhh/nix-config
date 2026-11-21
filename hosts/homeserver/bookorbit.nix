@@ -1,5 +1,10 @@
 # BookOrbit (bookorbit.app): no NixOS module, so this mirrors upstream's docker-compose.yml.
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  username,
+  ...
+}:
 let
   env = config.age.secrets.bookorbit-env.path; # POSTGRES_PASSWORD, JWT_SECRET, SETUP_BOOTSTRAP_TOKEN, BOOK_REQUEST_ENCRYPTION_KEY
   db = {
@@ -11,7 +16,7 @@ in
   age.secrets.bookorbit-env.file = ../../secrets/bookorbit-env.age;
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/bookorbit/app 0750 sasha users -"
+    "d /var/lib/bookorbit/app 0750 ${username} users -"
     # Postgres (container uid 999) must traverse this; its pgdata subfolder is 0700.
     "d /var/lib/bookorbit/postgres 0755 root root -"
   ];

@@ -3,7 +3,7 @@
 # are configured in its web UI and stored encrypted in the embedded PGlite
 # database, so the encryption key is the only secret here. The container runs
 # as uid 1000 (bun), matching sasha's uid for the bind mounts.
-{ config, ... }:
+{ config, username, ... }:
 let
   # DIGARR_ENCRYPTION_KEY (+ optional DIGARR_INITIAL_USERNAME/PASSWORD)
   digarrEnv = config.age.secrets.digarr-env.path;
@@ -12,9 +12,9 @@ in
   age.secrets.digarr-env.file = ../../secrets/digarr-env.age;
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/digarr 0750 sasha users -"
-    "d /var/lib/digarr/data 0750 sasha users -"
-    "d /var/lib/digarr/backups 0750 sasha users -"
+    "d /var/lib/digarr 0750 ${username} users -"
+    "d /var/lib/digarr/data 0750 ${username} users -"
+    "d /var/lib/digarr/backups 0750 ${username} users -"
   ];
 
   virtualisation.oci-containers.containers.digarr = {

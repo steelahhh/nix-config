@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, username, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -23,7 +23,7 @@
   # Lets `nixos-rebuild --target-host` deploy over SSH as sasha.
   nix.settings.trusted-users = [ "@wheel" ];
 
-  users.users.sasha = {
+  users.users.${username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     # Same keys as github.com/steelahhh.keys
@@ -59,8 +59,8 @@
   };
 
   systemd.tmpfiles.rules = [
-    "d /srv/music 0775 sasha users -"
-    "d /srv/books 0775 sasha users -"
+    "d /srv/music 0775 ${username} users -"
+    "d /srv/books 0775 ${username} users -"
     "d /srv/backups 0755 root root -"
   ];
 
