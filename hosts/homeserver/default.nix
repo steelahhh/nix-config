@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -40,6 +40,9 @@
     settings.PasswordAuthentication = false;
     settings.PermitRootLogin = "no";
   };
+
+  # Remote end of tide's rsync source (TIDE_SOURCE=homeserver:/srv/music on ignis).
+  environment.systemPackages = [ pkgs.rsync ];
 
   services.qemuGuest.enable = true;
   services.tailscale.enable = true;
