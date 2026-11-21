@@ -28,4 +28,5 @@ in
     ignis
     homeserver
   ];
+  "listenbrainz-token.age".publicKeys = [ ignis ];
 }

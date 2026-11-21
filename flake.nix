@@ -31,6 +31,11 @@
     nix-flatpak.url = "github:in-a-dil-emma/declarative-flatpak/latest";
     # no nixpkgs follows, so numtide's binary cache matches
     llm-agents.url = "github:numtide/llm-agents.nix";
+
+    tide = {
+      url = "github:steelahhh/tide";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

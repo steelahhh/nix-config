@@ -458,7 +458,8 @@
         "nix-darwin": "nix-darwin",
         "nix-flatpak": "nix-flatpak",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_8"
+        "nixpkgs": "nixpkgs_8",
+        "tide": "tide"
       }
     },
     "systems": {
@@ -503,6 +504,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default-darwin",
+        "type": "github"
+      }
+    },
+    "tide": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795257498,
+        "narHash": "sha256-jaf+3e20xB+raCbaEiZ0+aGqMUJ4zXSS4tmd7HVMLwU=",
+        "owner": "steelahhh",
+        "repo": "tide",
+        "rev": "61af793df840c782783091f04d5a2448f34f08e8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "steelahhh",
+        "repo": "tide",
         "type": "github"
       }
     },
