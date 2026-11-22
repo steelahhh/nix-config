@@ -1,9 +1,10 @@
 # Soulseek acquisition for Lidarr: slskd shares gluetun's netns so all P2P
-# traffic rides the IVPN tunnel; soularr bridges Lidarr's wanted list to slskd
-# searches and imports completed downloads via Lidarr's API (no download
-# client entry needed). IVPN has no port forwarding (removed 2023), so slskd
-# is download-only: the share mount and listen port are configured, but peers
-# cannot connect in. See docs/navidrome-music-stack-plan.md.
+# traffic rides the Proton tunnel; soularr bridges Lidarr's wanted list to
+# slskd searches and imports completed downloads via Lidarr's API (no download
+# client entry needed). Proton port forwarding is on (arr.nix): gluetun
+# PATCHes the forwarded port into slskd at runtime, so peers can connect in.
+# Sharing is a dedicated folder (/srv/slskd-share), NOT the music library.
+# See docs/navidrome-music-stack-plan.md.
 { config, username, ... }:
 let
   # SLSKD_SLSK_USERNAME, SLSKD_SLSK_PASSWORD, SLSKD_API_KEY (Administrator
@@ -20,6 +21,8 @@ in
     # download dirs to exist and be writable before startup.
     "d /srv/downloads/slskd 0775 ${username} users -"
     "d /srv/downloads/slskd-incomplete 0775 ${username} users -"
+    # Dedicated Soulseek share — populated by hand, decoupled from /srv/music.
+    "d /srv/slskd-share 0775 ${username} users -"
   ];
 
   virtualisation.oci-containers.containers = {
@@ -30,17 +33,19 @@ in
         PUID = "1000";
         PGID = "100";
         TZ = config.time.timeZone;
-        SLSKD_SHARED_DIR = "/srv/music";
+        SLSKD_SHARED_DIR = "/srv/slskd-share";
         SLSKD_DOWNLOADS_DIR = "/srv/downloads/slskd";
         SLSKD_INCOMPLETE_DIR = "/srv/downloads/slskd-incomplete";
-        # Fixed: IVPN forwards no ports, so nothing inbound reaches it anyway.
+        # Fallback only: gluetun's up-command PATCHes the actual forwarded
+        # port at runtime (arr.nix); the overlay resets to this on restart
+        # until gluetun re-runs the command.
         SLSKD_SLSK_LISTEN_PORT = "50300";
       };
       environmentFiles = [ slskdEnv ];
       volumes = [
         "/var/lib/slskd:/app"
-        # Share back (inactive while download-only); read-only is enough.
-        "/srv/music:/srv/music:ro"
+        # Share back to Soulseek peers; read-only is enough.
+        "/srv/slskd-share:/srv/slskd-share:ro"
         # Same path inside and outside: soularr and native Lidarr import from
         # the identical path slskd reports, so no remote path mapping.
         "/srv/downloads/slskd:/srv/downloads/slskd"

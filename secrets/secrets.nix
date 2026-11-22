@@ -16,10 +16,6 @@ in
     ignis
     homeserver
   ];
-  "ivpn-env.age".publicKeys = [
-    ignis
-    homeserver
-  ];
   "slskd-env.age".publicKeys = [
     ignis
     homeserver

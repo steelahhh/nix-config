@@ -2,15 +2,17 @@
 # Decypharr, which poses as qBittorrent but hands torrents to TorBox (RealDebrid
 # can be added in its wizard later). The torrenting happens at the debrid
 # provider, so indexer traffic (Prowlarr) and Soulseek P2P (slskd) ride the
-# VPN: both share Gluetun's netns, which kills anything not going through IVPN.
-# ddg-fetcher (BookOrbit's Anna's Archive solver) also joins this netns so AA
-# sees an IVPN exit; BookOrbit itself stays direct.
+# VPN: both share Gluetun's netns, which kills anything not going through
+# Proton. ddg-fetcher (BookOrbit's Anna's Archive solver) runs direct.
 { config, username, ... }:
 let
-  vpnEnv = config.age.secrets.ivpn-env.path; # WIREGUARD_PRIVATE_KEY, WIREGUARD_ADDRESSES, WIREGUARD_PRESHARED_KEY
+  vpnEnv = config.age.secrets.protonvpn-env.path; # WIREGUARD_PRIVATE_KEY, WIREGUARD_ADDRESSES
+  # gluetun's port-forwarding up-command PATCHes slskd with the forwarded
+  # port and needs SLSKD_API_KEY; gluetun ignores the other slskd vars.
+  slskdEnv = config.age.secrets.slskd-env.path;
 in
 {
-  age.secrets.ivpn-env.file = ../../secrets/ivpn-env.age;
+  age.secrets.protonvpn-env.file = ../../secrets/protonvpn-env.age;
 
   systemd.tmpfiles.rules = [
     "d /var/lib/gluetun 0700 root root -"
@@ -23,21 +25,31 @@ in
 
   virtualisation.oci-containers.containers = {
     gluetun = {
-      # Keep v3.40.0: verified with IVPN 2026-11-15. (On Proton, v3.41.x
-      # restart-looped: traffic only passed after the ~6s startup healthcheck
-      # window — https://github.com/qdm12/gluetun/issues/3069.)
+      # Keep v3.40.0: fixes the Proton healthcheck restart loop (v3.41.x only
+      # passed traffic after the ~6s startup window —
+      # https://github.com/qdm12/gluetun/issues/3069).
       image = "docker.io/qmcgaw/gluetun:v3.40.0";
       environment = {
-        VPN_SERVICE_PROVIDER = "ivpn";
+        VPN_SERVICE_PROVIDER = "protonvpn";
         VPN_TYPE = "wireguard";
-        # IVPN has no Baltic servers; Nordic-adjacent pool chosen 2026-11-15.
-        SERVER_COUNTRIES = "Sweden,Finland,Denmark,Poland";
+        # Baltic pool (user preference). With port forwarding on, Proton
+        # auto-filters to PF-capable P2P servers (PORT_FORWARD_ONLY defaults
+        # to true) — no need to set it.
+        SERVER_COUNTRIES = "Lithuania,Latvia,Estonia";
+        # Proton assigns a random forwarded port; slskd must listen on it for
+        # Soulseek peers to connect in (sharing). The up-command PATCHes
+        # slskd's runtime options — same netns, hence 127.0.0.1:5030. v3.40.0
+        # only substitutes {{PORTS}} (one port for Proton). slskd's overlay is
+        # volatile across its restarts and it may still be starting when this
+        # fires, so retry on connection refused.
+        VPN_PORT_FORWARDING = "on";
+        VPN_PORT_FORWARDING_UP_COMMAND = ''/bin/sh -c 'wget -q -O /dev/null --timeout=5 --tries=12 --waitretry=2 --retry-connrefused --method=PATCH --header="Content-Type: application/json" --header="X-API-Key: $SLSKD_API_KEY" --body-data="{\"soulseek\":{\"listenPort\":{{PORTS}}}}" http://127.0.0.1:5030/api/v0/options' '';
         # Kill switch exceptions: LAN and Tailscale clients may reach the
         # Prowlarr UI, and Prowlarr may reach Lidarr on the host.
         FIREWALL_OUTBOUND_SUBNETS = "192.168.1.0/24,100.64.0.0/10";
         TZ = config.time.timeZone;
       };
-      environmentFiles = [ vpnEnv ];
+      environmentFiles = [ vpnEnv slskdEnv ];
       # Prowlarr and slskd UIs publish through this netns; both join with
       # --network=container:gluetun. Torrent points and Soulseek stay on the
       # VPN; the AA solver runs direct by user choice 2026-11-15.

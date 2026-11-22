@@ -514,11 +514,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795257498,
-        "narHash": "sha256-jaf+3e20xB+raCbaEiZ0+aGqMUJ4zXSS4tmd7HVMLwU=",
+        "lastModified": 1795341918,
+        "narHash": "sha256-NBhioK2X3wLP1ogAEL1egeFRZniCSdXllYzMyqIgwXY=",
         "owner": "steelahhh",
         "repo": "tide",
-        "rev": "61af793df840c782783091f04d5a2448f34f08e8",
+        "rev": "a4b8e937f3362f745645a80e59c2cac2bf5e39ed",
         "type": "github"
       },
       "original": {
