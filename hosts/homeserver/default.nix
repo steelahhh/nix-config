@@ -8,6 +8,7 @@
     ./usenet.nix
     ./soulseek.nix
     ./discovery.nix
+    ./monitoring.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

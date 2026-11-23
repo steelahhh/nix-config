@@ -25,4 +25,8 @@ in
     homeserver
   ];
   "listenbrainz-token.age".publicKeys = [ ignis ];
+  "gatus-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }

@@ -21,12 +21,6 @@
     };
   };
 
-  # Monitors and alerts are set up in its web UI.
-  services.uptime-kuma = {
-    enable = true;
-    settings.HOST = "0.0.0.0";
-  };
-
   # Notifications, tailnet-only (no firewall opening: tailscale0 is trusted).
   # iOS can only be woken through ntfy.sh; only a hash of the message ID passes through.
   services.ntfy-sh = {
@@ -39,7 +33,7 @@
       upstream-base-url = "https://ntfy.sh";
     };
   };
-  # 80: Caddy (Homepage), 3001: Uptime Kuma
+  # 80: Caddy (Homepage), 3001: Gatus
   networking.firewall.allowedTCPPorts = [
     80
     3001
@@ -112,7 +106,7 @@
       {
         "Admin" = [
           {
-            "Uptime Kuma" = {
+            "Gatus" = {
               href = "http://homeserver:3001";
               description = "Service monitoring";
             };
