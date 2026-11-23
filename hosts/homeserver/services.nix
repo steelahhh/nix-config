@@ -26,6 +26,19 @@
     enable = true;
     settings.HOST = "0.0.0.0";
   };
+
+  # Notifications, tailnet-only (no firewall opening: tailscale0 is trusted).
+  # iOS can only be woken through ntfy.sh; only a hash of the message ID passes through.
+  services.ntfy-sh = {
+    enable = true;
+    settings = {
+      listen-http = ":2586";
+      # Bare hostname resolves via Tailscale MagicDNS on every tailnet device,
+      # same as all other service URLs here. No tailnet name in the repo.
+      base-url = "http://homeserver:2586";
+      upstream-base-url = "https://ntfy.sh";
+    };
+  };
   # 80: Caddy (Homepage), 3001: Uptime Kuma
   networking.firewall.allowedTCPPorts = [
     80
