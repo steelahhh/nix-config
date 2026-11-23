@@ -29,4 +29,8 @@ in
     ignis
     homeserver
   ];
+  "sabnzbd-secrets.ini.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }
