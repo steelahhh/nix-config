@@ -10,6 +10,9 @@
   age.secrets.airvpn-wg.file = ../../secrets/airvpn-wg.conf.age;
   # PROWLARR__AUTH__APIKEY
   age.secrets.prowlarr-env.file = ../../secrets/prowlarr-env.age;
+  # LIDARR__AUTH__APIKEY — Prowlarr, soularr, digarr and Decypharr all use
+  # this key, so the value must never change.
+  age.secrets.lidarr-env.file = ../../secrets/lidarr-env.age;
 
   vpnNamespaces.airvpn = {
     enable = true;
@@ -94,6 +97,16 @@
     user = username;
     group = "users";
     openFirewall = true;
+    settings = {
+      server = {
+        port = 8686;
+        bindaddress = "*";
+        authenticationmethod = "forms";
+        authenticationrequired = "enabled";
+      };
+      log.level = "debug";
+    };
+    environmentFiles = [ config.age.secrets.lidarr-env.path ];
   };
 
   networking.firewall.allowedTCPPorts = [

@@ -41,4 +41,8 @@ in
     ignis
     homeserver
   ];
+  "lidarr-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }
