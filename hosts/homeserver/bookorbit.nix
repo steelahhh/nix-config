@@ -1,97 +1,57 @@
-# BookOrbit (bookorbit.app): no NixOS module, so this mirrors upstream's docker-compose.yml.
+# BookOrbit (bookorbit.app): native nixpkgs module + native Postgres.
 {
   config,
+  lib,
   pkgs,
   username,
   ...
 }:
 let
-  env = config.age.secrets.bookorbit-env.path; # POSTGRES_PASSWORD, JWT_SECRET, SETUP_BOOTSTRAP_TOKEN, BOOK_REQUEST_ENCRYPTION_KEY
-  db = {
-    POSTGRES_USER = "bookorbit";
-    POSTGRES_DB = "bookorbit";
-  };
+  env = config.age.secrets.bookorbit-env.path; # POSTGRES_PASSWORD (unused, socket auth), JWT_SECRET, SETUP_BOOTSTRAP_TOKEN, BOOK_REQUEST_ENCRYPTION_KEY
 in
 {
   age.secrets.bookorbit-env.file = ../../secrets/bookorbit-env.age;
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/bookorbit/app 0750 ${username} users -"
-    # Postgres (container uid 999) must traverse this; its pgdata subfolder is 0700.
+    # Unused legacy Postgres data dir (container-era pg18); kept as a
+    # rollback copy, safe to delete. Its pgdata subfolder is 0700 root.
     "d /var/lib/bookorbit/postgres 0755 root root -"
   ];
 
-  # Shared network so the app reaches the database by container name.
-  systemd.services.podman-network-bookorbit = {
-    wantedBy = [
-      "podman-bookorbit-db.service"
-      "podman-bookorbit.service"
-    ];
-    before = [
-      "podman-bookorbit-db.service"
-      "podman-bookorbit.service"
-    ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
+  # Native Postgres over the Unix socket (peer auth); the POSTGRES_PASSWORD
+  # in the env file is unused. Library paths in the database are host paths
+  # (/srv/books), no bind mounts.
+  services.postgresql.package = pkgs.postgresql_18;
+  services.bookorbit = {
+    enable = true;
+    createDatabaseLocally = true;
+    environmentFile = env;
+    environment = {
+      PORT = 3030;
+      APP_URL = "http://homeserver:3030";
+      NODE_ENV = "production";
+      TZ = config.time.timeZone;
     };
-    script = "${pkgs.podman}/bin/podman network exists bookorbit || ${pkgs.podman}/bin/podman network create bookorbit";
   };
 
-  virtualisation.oci-containers.containers = {
-    # shortcut: raw Postgres files get backed up while running; add a pg_dump before the USB backup phase.
-    bookorbit-db = {
-      image = "docker.io/pgvector/pgvector:pg18";
-      environment = db // {
-        PGDATA = "/var/lib/postgresql/data/pgdata";
-      };
-      environmentFiles = [ env ];
-      volumes = [ "/var/lib/bookorbit/postgres:/var/lib/postgresql/data" ];
-      networks = [ "bookorbit" ];
-    };
+  # BookOrbit edits and deletes library files in place, so it needs group
+  # write on /srv/books: dirs g+rwsX (setgid keeps new subdirs in group users),
+  # files g+rw. Without setgid on dirs, subfolders BookOrbit creates stay
+  # 0755 and the next edit/delete in them fails EACCES.
+  users.users.bookorbit.extraGroups = [ "users" ];
+  systemd.services.bookorbit.serviceConfig = {
+    # Module default 0077 would make new book files unreadable by sasha and Samba.
+    UMask = lib.mkForce "0002";
+    # ProtectSystem=full leaves /srv read-only; the library and SABnzbd
+    # imports live there. Same paths inside and out, so no path mapping.
+    ReadWritePaths = [
+      "/srv/books"
+      "/srv/downloads/sabnzbd"
+    ];
+  };
 
-    bookorbit = {
-      # Releases are frequent; bump this tag to update.
-      image = "ghcr.io/bookorbit/bookorbit:3.8.0";
-      dependsOn = [ "bookorbit-db" ];
-      # 3000 is kept free for AdGuard Home.
-      ports = [ "3030:3000" ];
-      environment = db // {
-        NODE_ENV = "production";
-        PORT = "3000";
-        POSTGRES_HOST = "bookorbit-db";
-        POSTGRES_PORT = "5432";
-        APP_URL = "http://homeserver:3030";
-        TZ = config.time.timeZone;
-        # sasha:users, owner of /srv/books
-        PUID = "1000";
-        PGID = "100";
-      };
-      environmentFiles = [ env ];
-      volumes = [
-        "/srv/books:/books"
-        "/var/lib/bookorbit/app:/data"
-        # Same path inside and out: BookOrbit imports completed grabs from the
-        # storage path SABnzbd reports. Mount the parent, not complete/: podman
-        # auto-creates a missing top-level bind source but fails on nested paths,
-        # and the switch-time tmpfiles re-setup races with container restarts.
-        "/srv/downloads/sabnzbd:/srv/downloads/sabnzbd"
-      ];
-      networks = [ "bookorbit" ];
-      extraOptions = [
-        # NixOS maps the hostname to 127.0.0.2 in /etc/hosts and podman's DNS
-        # mirrors that into the container, so "homeserver" would point at the
-        # container's own loopback. Resolve it to the host instead (Prowlarr).
-        "--add-host=homeserver:host-gateway"
-        # Same hardening as upstream's compose file.
-        "--init"
-        "--read-only"
-        "--tmpfs=/tmp"
-        "--cap-drop=ALL"
-        "--cap-add=CHOWN,DAC_OVERRIDE,FOWNER,SETGID,SETUID"
-        "--security-opt=no-new-privileges"
-      ];
-    };
+  # ddg-fetcher stays a container (Camoufox base image).
+  virtualisation.oci-containers.containers = {
 
     # Fetches Anna's Archive pages for BookOrbit's plugin, waiting out
     # DDoS-Guard's JS check in a persistent Camoufox context. FlareSolverr

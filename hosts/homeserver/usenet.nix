@@ -22,6 +22,9 @@
 
   # Native service; settings below win over UI edits on every restart
   # (allowConfigWrite keeps the UI working; copy UI changes back here).
+  # Services default to umask 0077; downloads would be sasha-only and the
+  # bookorbit user couldn't read its completed grabs.
+  systemd.services.sabnzbd.serviceConfig.UMask = "0002";
   age.secrets.sabnzbd-secrets = {
     file = ../../secrets/sabnzbd-secrets.ini.age;
     owner = username;
@@ -36,11 +39,10 @@
       misc = {
         host = "0.0.0.0";
         port = 8080;
-        # The container NATed every client to a bridge IP, so LAN and
-        # Tailscale clients all looked "local" (no login). Native sees real
-        # source IPs: without the tailnet range here, inet_exposure=none
-        # blocks tailnet clients entirely. Setting local_ranges REPLACES
-        # SABnzbd's built-ins, so keep them and add 100.64.0.0/10.
+        # inet_exposure=none blocks non-local source IPs entirely, API
+        # keys included, so Tailscale clients must count as local. Setting
+        # local_ranges REPLACES SABnzbd's built-ins: keep them and add
+        # 100.64.0.0/10.
         local_ranges = "127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, ::1/128, fe80::/10";
         cache_limit = "1G";
         direct_unpack = true;
