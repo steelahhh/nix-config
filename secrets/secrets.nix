@@ -33,4 +33,12 @@ in
     ignis
     homeserver
   ];
+  "airvpn-wg.conf.age".publicKeys = [
+    ignis
+    homeserver
+  ];
+  "prowlarr-env.age".publicKeys = [
+    ignis
+    homeserver
+  ];
 }

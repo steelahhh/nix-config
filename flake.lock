@@ -459,7 +459,8 @@
         "nix-flatpak": "nix-flatpak",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_8",
-        "tide": "tide"
+        "tide": "tide",
+        "vpn-confinement": "vpn-confinement"
       }
     },
     "systems": {
@@ -581,6 +582,21 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "vpn-confinement": {
+      "locked": {
+        "lastModified": 1794523109,
+        "narHash": "sha256-AwEm7+NWkEgyZsKLlR3a0qU/V0uIirwCuxSLpmAiufA=",
+        "owner": "Maroka-chan",
+        "repo": "VPN-Confinement",
+        "rev": "eeab5446fdbba273905da915805db665524abda6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Maroka-chan",
+        "repo": "VPN-Confinement",
         "type": "github"
       }
     }

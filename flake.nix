@@ -36,6 +36,9 @@
       url = "github:steelahhh/tide";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # no nixpkgs input to follow
+    vpn-confinement.url = "github:Maroka-chan/VPN-Confinement";
   };
 
   outputs =
@@ -120,6 +123,7 @@
         };
         modules = [
           agenix.nixosModules.default
+          inputs.vpn-confinement.nixosModules.default
           ./hosts/homeserver
         ];
       };
