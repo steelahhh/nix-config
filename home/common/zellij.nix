@@ -17,6 +17,12 @@ in
 
       plugins.worktree._props.location = worktreePlugin;
 
+      # Works in locked mode too (default_mode). Not Alt f: AeroSpace owns it.
+      keybinds.shared.bind = {
+        _args = [ "Ctrl Space" ];
+        ToggleFloatingPanes = { };
+      };
+
       keybinds.shared_except = {
         _args = [ "locked" "tab" ];
         bind = {

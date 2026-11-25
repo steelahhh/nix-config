@@ -79,6 +79,17 @@
         # Install System data files & security updates
         CriticalUpdateInstall = 1;
       };
+      # Free ctrl+space (60) and ctrl+opt+space (61) from input-source switching
+      "com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
+        "60" = {
+          enabled = false;
+          value = { parameters = [ 32 49 262144 ]; type = "standard"; };
+        };
+        "61" = {
+          enabled = false;
+          value = { parameters = [ 32 49 786432 ]; type = "standard"; };
+        };
+      };
     };
   };
 }
