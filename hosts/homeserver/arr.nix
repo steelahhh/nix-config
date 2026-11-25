@@ -5,7 +5,11 @@
 # the VPN: both run in the airvpn network namespace (VPN-Confinement), whose
 # kill switch drops anything that would leave outside the AirVPN tunnel.
 # ddg-fetcher (BookOrbit's Anna's Archive solver) runs direct by user choice.
-{ config, username, ... }:
+{ config, lib, pkgs, username, ... }:
+let
+  netns = config.vpnNamespaces.airvpn;
+  netnsPorts = lib.concatMapStringsSep "," (m: toString m.from) netns.portMappings;
+in
 {
   age.secrets.airvpn-wg.file = ../../secrets/airvpn-wg.conf.age;
   # PROWLARR__AUTH__APIKEY
@@ -112,4 +116,24 @@
   networking.firewall.allowedTCPPorts = [
     8282 # Decypharr
   ];
+
+  # VPN-Confinement's portMappings only DNAT in PREROUTING, which host-local traffic skips.
+  networking.firewall.extraCommands = ''
+    iptables -t nat -N netns-local-dnat 2>/dev/null || iptables -t nat -F netns-local-dnat
+    iptables -t nat -N netns-local-snat 2>/dev/null || iptables -t nat -F netns-local-snat
+    iptables -t nat -A netns-local-dnat -o lo -p tcp -m multiport --dports ${netnsPorts} -j DNAT --to-destination ${netns.namespaceAddress}
+    iptables -t nat -A netns-local-snat -p tcp -d ${netns.namespaceAddress} -m multiport --dports ${netnsPorts} -j SNAT --to-source ${netns.bridgeAddress}
+    iptables -t nat -C OUTPUT -j netns-local-dnat 2>/dev/null || iptables -t nat -A OUTPUT -j netns-local-dnat
+    iptables -t nat -C POSTROUTING -j netns-local-snat 2>/dev/null || iptables -t nat -I POSTROUTING 1 -j netns-local-snat
+  '';
+  networking.firewall.extraStopCommands = ''
+    iptables -t nat -D OUTPUT -j netns-local-dnat 2>/dev/null || true
+    iptables -t nat -D POSTROUTING -j netns-local-snat 2>/dev/null || true
+    iptables -t nat -F netns-local-dnat 2>/dev/null || true
+    iptables -t nat -X netns-local-dnat 2>/dev/null || true
+    iptables -t nat -F netns-local-snat 2>/dev/null || true
+    iptables -t nat -X netns-local-snat 2>/dev/null || true
+  '';
+  systemd.services.airvpn.serviceConfig.ExecStartPost =
+    "${pkgs.procps}/bin/sysctl -w net.ipv4.conf.airvpn-br.route_localnet=1";
 }

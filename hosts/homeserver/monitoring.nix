@@ -55,13 +55,10 @@ in
         (http "Navidrome" "http://homeserver:4533")
         (http "BookOrbit" "http://homeserver:3030")
         (http "Lidarr" "http://homeserver:8686")
-        # Prowlarr and slskd live in the airvpn namespace (arr.nix). Host-local
-        # traffic skips the namespace's PREROUTING port mapping, so probe the
-        # namespace address directly; LAN/tailnet keep using homeserver:9696/5030.
-        (http "Prowlarr" "http://192.168.15.1:9696")
+        (http "Prowlarr" "http://homeserver:9696")
         (http "Decypharr" "http://homeserver:8282")
         (http "SABnzbd" "http://homeserver:8080")
-        (http "slskd" "http://192.168.15.1:5030")
+        (http "slskd" "http://homeserver:5030")
         (http "Soularr" "http://homeserver:8265")
         (http "digarr" "http://homeserver:5000")
         (http "Gatus" "http://localhost:3001")
