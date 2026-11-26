@@ -20,7 +20,7 @@ in
       "100.64.0.0/10"
       "10.88.0.0/16"
     ];
-    allowedEgress = [ "192.168.15.5" ];
+    allowedEgress = [ config.vpnNamespaces.airvpn.bridgeAddress ];
     portMappings = [
       9696
       5030

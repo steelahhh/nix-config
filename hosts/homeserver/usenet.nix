@@ -11,7 +11,6 @@
     "d /srv/downloads/sabnzbd/complete 0775 ${username} users -"
   ];
 
-  systemd.services.sabnzbd.serviceConfig.UMask = "0002";
   age.secrets.sabnzbd-secrets = {
     file = ../../secrets/sabnzbd-secrets.ini.age;
     owner = username;

@@ -3,8 +3,6 @@
   homebrew.enable = false;
 
   system.activationScripts.postActivation.text = ''
-    exec > /dev/tty 2>&1
-
     USER_NAME="ignis"
     BREW=/opt/homebrew/bin/brew
     as_user() { /usr/bin/sudo -u "$USER_NAME" -H "$@"; }

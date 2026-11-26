@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   environment.systemPackages = [
     pkgs.maestro
@@ -6,5 +6,5 @@
     pkgs.claude-code
   ];
 
-  launchd.user.envVariables.JAVA_HOME = "${pkgs.jdk21}";
+  launchd.user.envVariables.JAVA_HOME = config.home-manager.users.ignis.home.sessionVariables.JAVA_HOME;
 }

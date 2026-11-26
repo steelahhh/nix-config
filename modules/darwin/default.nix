@@ -42,7 +42,6 @@
       "enable-spring-load-actions-on-all-items" = true;
       "show-process-indicators" = true;
       "expose-animation-duration" = 0.1;
-      "dashboard-in-overlay" = true;
       "mru-spaces" = false;
       "autohide-delay" = 0.0;
       "autohide-time-modifier" = 0.0;

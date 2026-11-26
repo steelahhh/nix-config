@@ -11,9 +11,6 @@ in
 {
   age.secrets.bookorbit-env.file = ../../secrets/bookorbit-env.age;
 
-  systemd.tmpfiles.rules = [
-    "d /var/lib/bookorbit/postgres 0755 root root -"
-  ];
   services.postgresql.package = pkgs.postgresql_18;
   services.bookorbit = {
     enable = true;
@@ -31,10 +28,6 @@ in
   systemd.services.bookorbit.serviceConfig = {
     # Module default 0077 would make new book files unreadable by sasha and Samba.
     UMask = lib.mkForce "0002";
-    ReadWritePaths = [
-      "/srv/books"
-      "/srv/downloads/sabnzbd"
-    ];
   };
 
   virtualisation.oci-containers.containers = {

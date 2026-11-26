@@ -53,7 +53,7 @@
 
   systemd.tmpfiles.rules = [
     "d /srv/music 0775 ${username} users -"
-    "d /srv/books 0775 ${username} users -"
+    "d /srv/books 2775 ${username} users -"
     "d /srv/backups 0755 root root -"
   ];
 

@@ -86,17 +86,6 @@
           {
             nixpkgs.overlays = [
               helium-flake.overlays.default
-              (final: prev: {
-                localsend = prev.symlinkJoin {
-                  name = "localsend-${prev.localsend.version}-zlib-fix";
-                  paths = [ prev.localsend ];
-                  nativeBuildInputs = [ prev.makeWrapper ];
-                  postBuild = ''
-                    wrapProgram $out/bin/localsend_app \
-                      --prefix LD_LIBRARY_PATH : ${prev.lib.makeLibraryPath [ prev.zlib ]}
-                  '';
-                };
-              })
             ];
           }
           nix-flatpak.nixosModules.default

@@ -43,7 +43,8 @@
 
     pi-coding-agent
 
-    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.qwen-code
+    qwen-code
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.kimi-code
 
     inputs.tide.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
