@@ -28,10 +28,7 @@
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     # Same keys as github.com/steelahhh.keys
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGH96Nm9Nbb3h+4ru6VvBppcEn1FEuCc2glfFLNFdM6h"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIRy3sJUMmIVA83EOEajGPgx6qe4+0r3Qt2CecFjGS35"
-    ];
+    openssh.authorizedKeys.keys = import ../ssh-keys.nix;
   };
   # Key-only SSH, so remote deploys can sudo without a password prompt.
   security.sudo.wheelNeedsPassword = false;

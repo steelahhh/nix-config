@@ -46,9 +46,18 @@
 
   services.tailscale.enable = true;
 
+  services.openssh = {
+    enable = true;
+    openFirewall = false;
+    settings.PasswordAuthentication = false;
+    settings.PermitRootLogin = "no";
+  };
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 22 ];
+
   users.users.${username} = {
     isNormalUser = true;
     description = username;
+    openssh.authorizedKeys.keys = import ../ssh-keys.nix;
     extraGroups = [
       "networkmanager"
       "wheel"
