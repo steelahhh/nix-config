@@ -35,6 +35,7 @@
         download_dir = "/srv/downloads/sabnzbd/incomplete";
         download_free = "500M";
         complete_dir = "/srv/downloads/sabnzbd/complete";
+        permissions = "775";
       };
       servers."news.newshosting.com" = {
         name = "news.newshosting.com";

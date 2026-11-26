@@ -11,6 +11,10 @@ in
 {
   age.secrets.bookorbit-env.file = ../../secrets/bookorbit-env.age;
 
+  systemd.tmpfiles.rules = [
+    "d /srv/bookorbit-dock 0775 bookorbit users -"
+  ];
+
   services.postgresql.package = pkgs.postgresql_18;
   services.bookorbit = {
     enable = true;
@@ -21,6 +25,7 @@ in
       APP_URL = "http://homeserver:3030";
       NODE_ENV = "production";
       TZ = config.time.timeZone;
+      BOOK_DOCK_PATH = "/srv/bookorbit-dock";
     };
   };
 
