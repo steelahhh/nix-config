@@ -67,7 +67,7 @@ in
   systemd.services.vpn-tunnel-check = lib.recursiveUpdate (report "jobs_vpn-tunnel") {
     serviceConfig.Type = "oneshot";
     script = ''
-      country="$(${pkgs.iproute2}/bin/ip netns exec airvpn ${pkgs.curl}/bin/curl -fsS --max-time 20 https://ipinfo.io/country)"
+      country="$(${pkgs.iproute2}/bin/ip netns exec airvpn ${pkgs.curl}/bin/curl -fsS --max-time 20 https://ifconfig.co/country-iso)"
       [ -n "$country" ] && [ "$country" != "NO" ]
     '';
   };
