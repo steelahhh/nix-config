@@ -1,9 +1,3 @@
-"""Offline logic tests for apple_music_import.py (stdlib only).
-
-Run: python3 scripts/test_apple_music_import.py
-Builds a synthetic Apple Music export in a temp dir; no network needed.
-"""
-
 import importlib.util
 import json
 import plistlib
@@ -50,13 +44,11 @@ with xml_path.open("wb") as fh:
 json_path = tmp / "Library.json"
 json_path.write_text(json.dumps(lib), encoding="utf-8")
 
-# parsing: both formats
 for p in (xml_path, json_path):
     loaded = ami.load_library(p)
     assert loaded["Tracks"]["101"]["Name"] == "Xtal", p
 print("ok: load_library (plist + json)")
 
-# artist extraction: album-artist fallback, dedupe, empty skip
 artists, pairs = ami.extract_artists(tracks)
 assert set(artists) == {"aphex twin", "boards of canada"}, artists
 assert artists["boards of canada"] == "Boards of Canada"
@@ -64,19 +56,16 @@ assert pairs == {("aphex twin", "Selected Ambient Works 85-92"),
                  ("boards of canada", "Music Has the Right to Children")}, pairs
 print("ok: extract_artists dedupe/fallback")
 
-# playlist filtering: only real user playlists with items
 pls = list(ami.user_playlists(lib))
 assert pls == [("My Mix", [101, 103, 999])], pls
 print("ok: user_playlists filtering")
 
-# lookup match preference: exact name beats first result
 results = [{"artistName": "Aphex Twin Tribute"}, {"artistName": "Aphex Twin"}]
 assert ami.choose_lookup_match(results, "aphex twin")["artistName"] == "Aphex Twin"
 assert ami.choose_lookup_match(results[:1], "Aphex Twin") is results[0]
 assert ami.choose_lookup_match([], "X") is None
 print("ok: choose_lookup_match")
 
-# matching: exact title + artist required, album breaks ties
 class FakeND:
     def __init__(self, songs):
         self.songs = songs
@@ -98,11 +87,9 @@ m = ami.match_track(nd, tracks["101"], {})
 assert m is song_exact, m
 assert ami.match_track(FakeND([song_wrong_artist]), tracks["101"], {}) is None
 assert ami.match_track(FakeND([song_cover]), tracks["101"], {}) is None
-# partial artist match accepted (e.g. "Boards of Canada" vs remaster credit)
 partial = dict(song_exact, title="Roygbiv", artist="Boards of Canada Ltd")
 m2 = ami.match_track(FakeND([partial]), tracks["103"], {})
 assert m2 is partial
-# cache hit avoids a second search
 cache = {}
 nd2 = FakeND([song_exact])
 ami.match_track(nd2, tracks["101"], cache)
@@ -110,7 +97,6 @@ ami.match_track(nd2, tracks["101"], cache)
 assert len(nd2.queries) == 1, nd2.queries
 print("ok: match_track scoring + cache")
 
-# m3u8 rendering: absolute paths under the server music folder
 text = ami.render_m3u8([song_exact], "/srv/music")
 lines = text.splitlines()
 assert lines[0] == "#EXTM3U"
@@ -119,14 +105,12 @@ assert lines[2] == "/srv/music/Aphex Twin/SAW/01 Xtal.flac"
 assert text.endswith("\n")
 print("ok: render_m3u8")
 
-# filename sanitization + collision handling
 used = set()
 assert ami.safe_filename("My/Mix: Vol 2", used) == "My_Mix_ Vol 2.m3u8"
 assert ami.safe_filename("My/Mix: Vol 2", used) == "My_Mix_ Vol 2-2.m3u8"
 assert ami.safe_filename("", used) == "playlist.m3u8"
 print("ok: safe_filename")
 
-# state round-trip
 state_path = tmp / "state.json"
 state = {"artists": {"aphex twin": {"status": "added"}}}
 ami.save_state(state_path, state)
@@ -134,7 +118,6 @@ assert ami.load_state(state_path) == state
 assert ami.load_state(tmp / "missing.json") == {"artists": {}}
 print("ok: state save/load")
 
-# CLI surface
 help_out = subprocess.run(
     [sys.executable, str(REPO / "scripts/apple_music_import.py"), "--help"],
     capture_output=True, text=True)

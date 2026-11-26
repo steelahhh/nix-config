@@ -1,29 +1,16 @@
-# Usenet (Newshosting) for BookOrbit. SABnzbd is a real download client here
-# because BookOrbit's SABnzbd adapter calls API modes Decypharr's emulation
-# does not expose (version, get_config). Lidarr's Usenet grabs go through
-# Decypharr's SABnzbd emulation instead, so no second client is needed there.
-# Usenet is client-server SSL, not P2P: direct egress, outside gluetun.
 { config, lib, username, ... }:
 {
-  # homeserver doesn't import modules/common; sabnzbd needs unrar (unfree).
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "unrar" ];
 
   systemd.tmpfiles.rules = [
     "d /var/lib/sabnzbd 0750 ${username} users -"
-    # Same path inside and outside the container: BookOrbit imports completed
-    # grabs from the storage path SABnzbd reports, so it mounts this tree at
-    # the identical path (see bookorbit.nix). The parent needs its own rule:
-    # created implicitly (by tmpfiles or podman) it stays root-owned, which
-    # makes tmpfiles refuse the leaf rules as an unsafe path transition.
+    # The parent needs its own rule: created implicitly it stays root-owned,
+    # which makes tmpfiles refuse the leaf rules as an unsafe path transition.
     "d /srv/downloads/sabnzbd 0775 ${username} users -"
     "d /srv/downloads/sabnzbd/incomplete 0775 ${username} users -"
     "d /srv/downloads/sabnzbd/complete 0775 ${username} users -"
   ];
 
-  # Native service; settings below win over UI edits on every restart
-  # (allowConfigWrite keeps the UI working; copy UI changes back here).
-  # Services default to umask 0077; downloads would be sasha-only and the
-  # bookorbit user couldn't read its completed grabs.
   systemd.services.sabnzbd.serviceConfig.UMask = "0002";
   age.secrets.sabnzbd-secrets = {
     file = ../../secrets/sabnzbd-secrets.ini.age;
@@ -57,14 +44,8 @@
         connections = 16;
         pipelining_requests = 2;
       };
-      # Categories BookOrbit (bookorbit) and Lidarr/Decypharr (music, lidarr)
-      # send jobs with; the rest are SABnzbd's defaults, declared so the
-      # generated config matches what the container ran.
       categories =
         let
-          # What SABnzbd's default categories (movies/tv/audio/software)
-          # and the container-era custom ones look like; pp/dir/newzbin
-          # empty means "inherit defaults".
           cat = order: {
             inherit order;
             pp = "";
@@ -95,6 +76,6 @@
   };
 
   networking.firewall.allowedTCPPorts = [
-    8080 # SABnzbd
+    8080
   ];
 }

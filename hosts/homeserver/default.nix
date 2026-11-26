@@ -21,16 +21,13 @@
     "nix-command"
     "flakes"
   ];
-  # Lets `nixos-rebuild --target-host` deploy over SSH as sasha.
   nix.settings.trusted-users = [ "@wheel" ];
 
   users.users.${username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    # Same keys as github.com/steelahhh.keys
     openssh.authorizedKeys.keys = import ../ssh-keys.nix;
   };
-  # Key-only SSH, so remote deploys can sudo without a password prompt.
   security.sudo.wheelNeedsPassword = false;
 
   services.openssh = {
@@ -39,14 +36,12 @@
     settings.PermitRootLogin = "no";
   };
 
-  # Remote end of tide's rsync source (TIDE_SOURCE=homeserver:/srv/music on ignis).
   environment.systemPackages = [ pkgs.rsync ];
 
   services.qemuGuest.enable = true;
   services.tailscale.enable = true;
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
-  # Follows what is pushed to trunk; push before deploying or the nightly run reverts it.
   system.autoUpgrade = {
     enable = true;
     flake = "github:steelahhh/nix-config#homeserver";

@@ -46,7 +46,6 @@ USER_AGENT = "apple-music-import/1.0"
 
 
 def norm(s):
-    """Casefold + collapse whitespace, for name comparisons."""
     return " ".join((s or "").casefold().split())
 
 
@@ -58,8 +57,6 @@ class ApiError(Exception):
 
 
 class Throttle:
-    """Minimum interval between requests (rate is requests/second)."""
-
     def __init__(self, rate):
         self.interval = 1.0 / rate if rate > 0 else 0.0
         self.last = 0.0
@@ -73,7 +70,6 @@ class Throttle:
 
 
 def http_json(url, throttle, headers=None, method="GET", payload=None):
-    """JSON request with retries on transient failures (429/5xx/network)."""
     last_err = None
     for attempt in range(3):
         throttle.wait()
@@ -121,8 +117,6 @@ class Lidarr:
 
 
 class Navidrome:
-    """Subsonic API client (token auth, JSON responses)."""
-
     def __init__(self, base_url, user, password, throttle):
         self.base = base_url.rstrip("/")
         self.throttle = throttle
@@ -165,7 +159,6 @@ def track_artist(track):
 
 
 def extract_artists(tracks):
-    """Unique artists (normalized -> display name) and (artist, album) pairs."""
     artists = {}
     pairs = set()
     for track in tracks.values():
@@ -182,11 +175,6 @@ def extract_artists(tracks):
 
 
 def user_playlists(library):
-    """Yield (name, [track ids]) for real user playlists.
-
-    Skips folders, media-kind system playlists (Distinguished Kind: Music,
-    Movies, ...) and smart/empty playlists (no Playlist Items in the export).
-    """
     for pl in library.get("Playlists", []):
         if not isinstance(pl, dict):
             continue
@@ -319,11 +307,6 @@ def cmd_artists(args):
 
 
 def match_track(navidrome, track, cache):
-    """Find the local song for an Apple track; precision over recall.
-
-    Requires an exact title match plus at least a partial artist match;
-    an album match breaks ties. Returns the Subsonic song dict or None.
-    """
     title = (track.get("Name") or "").strip()
     artist = (track.get("Artist") or track_artist(track) or "").strip()
     album = (track.get("Album") or "").strip()

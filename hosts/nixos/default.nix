@@ -27,7 +27,6 @@
     LC_TIME = "nb_NO.UTF-8";
   };
 
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";

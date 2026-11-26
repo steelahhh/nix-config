@@ -25,7 +25,6 @@
       ];
 
       shape = [
-        # User box
         {
           monitor = "";
           size = "300, 50";
@@ -39,7 +38,6 @@
       ];
 
       label = [
-        # Time
         {
           monitor = "";
           text = ''cmd[update:1000] echo "$(date +'%k:%M')"'';
@@ -51,7 +49,6 @@
           halign = "center";
           valign = "top";
         }
-        # Date
         {
           monitor = "";
           text = ''cmd[update:1000] echo "- $(date +'%A, %B %d') -" '';
@@ -63,7 +60,6 @@
           halign = "center";
           valign = "top";
         }
-        # Username
         {
           monitor = "";
           text = "  $USER";

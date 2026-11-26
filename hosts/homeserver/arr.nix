@@ -1,10 +1,3 @@
-# Music grabbing stack: Lidarr searches via Prowlarr and "downloads" through
-# Decypharr, which poses as qBittorrent but hands torrents to TorBox (RealDebrid
-# can be added in its wizard later). The torrenting happens at the debrid
-# provider, so only indexer traffic (Prowlarr) and Soulseek P2P (slskd) need
-# the VPN: both run in the airvpn network namespace (VPN-Confinement), whose
-# kill switch drops anything that would leave outside the AirVPN tunnel.
-# ddg-fetcher (BookOrbit's Anna's Archive solver) runs direct by user choice.
 { config, lib, pkgs, username, ... }:
 let
   netns = config.vpnNamespaces.airvpn;
@@ -12,10 +5,7 @@ let
 in
 {
   age.secrets.airvpn-wg.file = ../../secrets/airvpn-wg.conf.age;
-  # PROWLARR__AUTH__APIKEY
   age.secrets.prowlarr-env.file = ../../secrets/prowlarr-env.age;
-  # LIDARR__AUTH__APIKEY — Prowlarr, soularr, digarr and Decypharr all use
-  # this key, so the value must never change.
   age.secrets.lidarr-env.file = ../../secrets/lidarr-env.age;
 
   vpnNamespaces.airvpn = {
@@ -30,25 +20,17 @@ in
       "100.64.0.0/10"
       "10.88.0.0/16"
     ];
-    # The bridge address is the host as seen from the namespace; Prowlarr
-    # reaches Lidarr at http://192.168.15.5:8686 through it.
     allowedEgress = [ "192.168.15.5" ];
-    # Prowlarr and slskd UIs on the host; LAN/tailnet traffic to these is
-    # DNAT'd into the namespace, so they must NOT be in the host firewall.
     portMappings = [
       9696
       5030
     ];
-    # AirVPN's fixed port forward (reserved in the Client Area) so Soulseek
-    # peers can connect in; slskd listens on it (soulseek.nix).
     vpn.allowedTCPPorts = [ config.services.slskd.settings.soulseek.listen_port ];
     vpn.allowedUDPPorts = [ config.services.slskd.settings.soulseek.listen_port ];
   };
 
   systemd.tmpfiles.rules = [
     "d /var/lib/decypharr 0750 ${username} users -"
-    # Decypharr writes here, Lidarr imports into /srv/music; same path inside
-    # and outside the container so no remote path mapping is needed in Lidarr.
     "d /srv/downloads 0775 ${username} users -"
   ];
 
@@ -60,9 +42,6 @@ in
         bindaddress = "*";
         authenticationmethod = "forms";
         authenticationrequired = "enabled";
-        # Empty = accept any Host header. The UI is LAN/tailnet-only behind
-        # forms auth, and listing addresses here would publish tailnet
-        # details in a public repo.
         allowedhosts = "";
       };
       log.level = "debug";
@@ -97,7 +76,6 @@ in
 
   services.lidarr = {
     enable = true;
-    # Matches /srv ownership and Decypharr's PUID/PGID so imports just work.
     user = username;
     group = "users";
     openFirewall = true;
@@ -114,7 +92,7 @@ in
   };
 
   networking.firewall.allowedTCPPorts = [
-    8282 # Decypharr
+    8282
   ];
 
   # VPN-Confinement's portMappings only DNAT in PREROUTING, which host-local traffic skips.

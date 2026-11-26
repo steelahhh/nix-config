@@ -1,23 +1,3 @@
-# DDoS-Guard-aware fetcher for BookOrbit's Anna's Archive plugin.
-#
-# Runs inside the Byparr image (ghcr.io/thephaseless/byparr), which bundles
-# Camoufox + invisible_playwright + FastAPI. Speaks just enough of FlareSolverr's
-# /v1 API to be a drop-in replacement: the plugin POSTs request.get and reads
-# status / solution.response.
-#
-# Why this exists: Anna's Archive serves automated browsers DDoS-Guard's JS
-# check (and, when that fails, a manual CAPTCHA). Byparr itself returns the
-# interstitial because it only waits for Cloudflare challenges and networkidle,
-# which fires before DDoS-Guard's redirect chain completes. The verification
-# cookies are bound to the issuing browser's TLS fingerprint, so replaying them
-# from Node/curl does not work (tested 2026-11-15). The only reliable reader is
-# the browser that passed the check — so this service keeps ONE persistent
-# context: the first navigation solves the check, every later search rides the
-# verified cookies, and an expired token is re-solved automatically.
-#
-# LAN-only like the FlareSolverr it replaces; the caller (BookOrbit) is trusted.
-# No secrets, no disk writes beyond the browser's own cache, no eval of pages.
-
 import asyncio
 import os
 import re
@@ -29,14 +9,9 @@ from pydantic import BaseModel, Field
 from invisible_playwright.async_api import InvisiblePlaywright
 
 PORT = int(os.environ.get("PORT", "8191"))
-# Warm the context at startup so the first real search is already verified.
 WARM_URL = os.environ.get("WARM_URL", "https://annas-archive.gl/")
-# Ceiling for any single solve, including background continuation after a
-# caller's budget ran out.
 MAX_WAIT_S = float(os.environ.get("MAX_WAIT", "60"))
 
-# Interstitial markers, matched lowercase — same set the plugin uses, plus the
-# redirect stub. A page carrying these is never returned as a result.
 CHALLENGE_MARKERS = (
     "<title>ddos-guard</title>",
     "/.well-known/ddos-guard/",
@@ -47,16 +22,12 @@ CHALLENGE_MARKERS = (
     "/cdn-cgi/challenge-platform",
     "<title>redirecting...</title>",
 )
-# Markers of a real Anna's Archive page (results, empty answer, or any inner
-# page). Their absence means the flow has not landed yet.
 ANNAS_MARKERS = ("/md5/", "aarecord", "/dyn/", "/datasets", "/fast_download", "/slow_download")
 ERROR_TITLE = re.compile(r"<title>\s*5\d\d", re.I)
 
 
 def classify(html: str) -> str:
     lowered = html.lower()
-    # Real-page markers win, like the plugin's own detector: genuine AA pages
-    # may reference DDoS-Guard endpoints without being interstitials.
     if "no files found." in lowered or any(marker in lowered for marker in ANNAS_MARKERS):
         return "done"
     if any(marker in lowered for marker in CHALLENGE_MARKERS):
@@ -77,7 +48,6 @@ lock = asyncio.Lock()
 
 
 async def poll(page, deadline: float) -> tuple[str, str]:
-    """Wait until the page leaves the challenge flow. Returns (verdict, html)."""
     html = ""
     while time.monotonic() < deadline:
         try:
@@ -102,9 +72,6 @@ async def navigate(url: str, budget_s: float) -> tuple[str, str]:
 
 
 async def solve(url: str, budget_s: float) -> dict:
-    """One fetch under the lock; on timeout the solve continues in the
-    background so the next caller finds a verified context instead of racing
-    the same challenge again."""
     async with lock:
         pending = state["pending"]
         if pending is not None and not pending.done():

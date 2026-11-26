@@ -37,7 +37,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # no nixpkgs input to follow
     vpn-confinement.url = "github:Maroka-chan/VPN-Confinement";
   };
 
@@ -87,8 +86,6 @@
           {
             nixpkgs.overlays = [
               helium-flake.overlays.default
-              # localsend 1.18.0 links libz but zlib is missing from its
-              # RUNPATH, so the binary dies on startup; re-wrap with zlib.
               (final: prev: {
                 localsend = prev.symlinkJoin {
                   name = "localsend-${prev.localsend.version}-zlib-fix";

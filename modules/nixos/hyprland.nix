@@ -8,8 +8,6 @@
     pkgs.wayle
   ];
 services.displayManager.sddm.wayland.enable = true;
-  # services.xserver.videoDrivers = [ "nvidia" ];
-  # services.xserver.enable = true;
 
   programs.hyprland = {
     enable = true;

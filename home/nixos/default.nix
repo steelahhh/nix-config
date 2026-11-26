@@ -10,7 +10,6 @@
   home.packages = [
   ];
 
-  # dedicated passphrase-less age key, same identity as macOS (secrets/secrets.nix)
   age.identityPaths = [ "${config.home.homeDirectory}/.config/age/keys.txt" ];
   age.secrets.listenbrainz-token.file = ../../secrets/listenbrainz-token.age;
 

@@ -1,17 +1,12 @@
 { config, lib, pkgs, ... }:
 let
-  # Expects a report at least every `interval`; alerts on a failed or missing report.
   heartbeat = name: interval: {
     inherit name;
     group = "jobs";
     token = "\${GATUS_TOKEN}";
     heartbeat.interval = interval;
-    # Threshold 1: a daily job can't wait for 3 failures (that would be 3 days),
-    # and one good run after a failure must resolve it (a daily job only ever
-    # reports once in a row).
     alerts = [ { type = "ntfy"; failure-threshold = 1; success-threshold = 1; send-on-resolved = true; } ];
   };
-  # Attach to a systemd unit: reports success or failure to Gatus when the unit ends.
   report = key: {
     serviceConfig.EnvironmentFile = [ config.age.secrets.gatus-env.path ];
     serviceConfig.ExecStopPost = toString (pkgs.writeShellScript "gatus-report-${key}" ''
@@ -36,7 +31,7 @@ in
     enable = true;
     environmentFile = config.age.secrets.gatus-env.path;
     settings = {
-      web.port = 3001; # Uptime Kuma's old port: Homepage link and firewall rule stay valid
+      web.port = 3001;
       storage = {
         type = "sqlite";
         path = "/var/lib/gatus/data.db";
@@ -69,8 +64,6 @@ in
     };
   };
 
-  # Fails if the tunnel is down or traffic exits in Norway — the AirVPN
-  # Europe pool changes exit country, so any non-Norwegian country passes.
   systemd.services.vpn-tunnel-check = lib.recursiveUpdate (report "jobs_vpn-tunnel") {
     serviceConfig.Type = "oneshot";
     script = ''

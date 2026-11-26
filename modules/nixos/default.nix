@@ -43,7 +43,6 @@
 
     pi-coding-agent
 
-    # nixpkgs lags behind; Qwen subscription sign-in needs >= 0.26.8
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.qwen-code
 
     inputs.tide.packages.${pkgs.stdenv.hostPlatform.system}.default

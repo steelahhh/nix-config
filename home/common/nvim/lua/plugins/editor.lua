@@ -1,5 +1,4 @@
 return {
-  -- vim-surround keys, like `set surround` in idea.vimrc
   {
     "nvim-mini/mini.surround",
     opts = {

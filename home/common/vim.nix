@@ -13,7 +13,6 @@
     withRuby = false;
     withPython3 = false;
     initLua = ''require("config.lazy")'';
-    # LSPs, linters, formatters and debuggers come from nix instead of Mason
     extraPackages = [
       pkgs.beamPackages.expert
       pkgs.rubyPackages.solargraph

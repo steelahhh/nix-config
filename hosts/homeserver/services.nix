@@ -1,8 +1,5 @@
 { username, ... }:
 {
-  # Apple Music playlist imports (.m3u8) land here, written as sasha over
-  # SSH. Inside MusicFolder, so Navidrome's sandbox binds it read-only —
-  # imports work; playlists edited in the UI stay in its database only.
   systemd.tmpfiles.rules = [
     "d /srv/music/playlists 0775 ${username} users -"
   ];
@@ -10,10 +7,8 @@
   services.navidrome = {
     enable = true;
     openFirewall = true;
-    # ListenBrainz scrobbling is built in: per-user token in the UI, no env.
     withPlugins = p: [ p.listenbrainz-daily-playlist ];
     settings = {
-      # Default is localhost only; this opens it to the LAN and Tailscale.
       Address = "0.0.0.0";
       Port = 4533;
       MusicFolder = "/srv/music";
@@ -21,19 +16,15 @@
     };
   };
 
-  # Notifications, tailnet-only (no firewall opening: tailscale0 is trusted).
   # iOS can only be woken through ntfy.sh; only a hash of the message ID passes through.
   services.ntfy-sh = {
     enable = true;
     settings = {
       listen-http = ":2586";
-      # Bare hostname resolves via Tailscale MagicDNS on every tailnet device,
-      # same as all other service URLs here. No tailnet name in the repo.
       base-url = "http://homeserver:2586";
       upstream-base-url = "https://ntfy.sh";
     };
   };
-  # 80: Caddy (Homepage), 3001: Gatus
   networking.firewall.allowedTCPPorts = [
     80
     3001
@@ -42,7 +33,6 @@
   services.homepage-dashboard = {
     enable = true;
     openFirewall = true;
-    # Homepage rejects requests for hostnames not listed here.
     allowedHosts = "homeserver,homeserver:8082,localhost:8082";
     services = [
       {
