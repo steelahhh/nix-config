@@ -30,6 +30,7 @@
     pkgs.ripgrep
     pkgs.yazi
     pkgs.delta
+    pkgs.glow
   ];
 
   fonts.packages = [
